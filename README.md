@@ -57,3 +57,7 @@ A Roblox declara oficialmente que o cliente não é suportado em Linux. Foram en
 ### Roblox — verificação de arquitetura
 
 A loja apresenta Roblox como experimental e faz uma verificação local da arquitetura antes de qualquer tentativa. No Raspberry Pi 2 (ARMv7/32-bit), bloqueia a tentativa porque os runtimes comunitários investigados exigem x86-64 ou, no caso do Cordial, no máximo aarch64 em desenvolvimento; ARMv7 não está suportado. Não existe um pacote otimizado que transforme o binário Android ARM64/x86-64 num programa ARMv7. Reduzir efeitos ou serviços do PiFootball OS não resolve a incompatibilidade de ABI. A Roblox também declara que Linux não é suportado oficialmente.
+
+### PiTube — interface YouTube para televisão
+
+Foi adicionada `apps/pitube/index.html`, uma interface TV própria com navegação para Início, Explorar, Shorts, Subscrições, Biblioteca, pesquisa e canais. A pesquisa e a reprodução são encaminhadas para páginas oficiais do YouTube; a interface não extrai streams nem substitui o leitor oficial. O PiTube precisa de um browser compatível (preferencialmente Chromium). A compatibilidade e o desempenho no Raspberry Pi 2 ainda não foram testados em hardware.
