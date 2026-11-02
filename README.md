@@ -82,3 +82,14 @@ O PiCraft está a evoluir para um jogo próprio, sem depender do Minecraft ofici
 - gravação do mundo no armazenamento local do navegador.
 
 Abrir PiCraft e escolher **Jogar PiCraft**. Esta é uma base inicial 2D isométrica, não um motor 3D completo: ainda faltam primeira pessoa, crafting, ferramentas, mobs, iluminação, água, áudio gravado, mundos grandes e integração completa com o comando Samsung. Os sons são gerados por síntese e as texturas são originais, não recursos extraídos de outros jogos. O desempenho e os controlos têm de ser testados no Raspberry Pi 2 real.
+
+
+### PiCraft 0.2 — conteúdo adicional nos ficheiros
+
+- 56 blocos/materiais originais definidos no jogo.
+- Inventário rolável para consultar o catálogo completo.
+- Oito receitas iniciais de crafting.
+- Dez tipos de criaturas com aparecimento durante a exploração e movimento simples.
+- O mundo guarda também o estado das criaturas no armazenamento local do navegador.
+- Continua a ser um protótipo isométrico 2D: não há ainda combate, drops, IA avançada ou bancada de crafting completa.
+- Alterações feitas apenas em `apps/picraft/game.html` e documentação. Não foi criada nem alterada qualquer release ou imagem `.img`.
