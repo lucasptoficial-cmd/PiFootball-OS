@@ -316,8 +316,15 @@ def main():
                         package = pending_install
                         if shutil.which("apt-get"):
                             try:
-                                install_process = subprocess.Popen(["sudo", "apt-get", "install", "-y", package], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
-                                message = "Instalação iniciada: " + package
+                                terminal = shutil.which("x-terminal-emulator")
+                                if terminal:
+                                    install_process = subprocess.Popen([terminal, "-e", "sudo", "apt-get", "install", "-y", package], start_new_session=True)
+                                    message = "Instalação aberta no terminal: " + package
+                                elif shutil.which("pkexec"):
+                                    install_process = subprocess.Popen(["pkexec", "apt-get", "install", "-y", package], start_new_session=True)
+                                    message = "A aguardar autorização para instalar: " + package
+                                else:
+                                    message = "Não encontrei terminal gráfico nem pkexec para pedir autorização."
                             except OSError as exc:
                                 message = "Erro ao iniciar instalação: " + str(exc)
                         else:
