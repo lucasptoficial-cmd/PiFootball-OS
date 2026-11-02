@@ -53,7 +53,7 @@ class SamsungRemote:
             pg.event.post(pg.event.Event(pg.KEYDOWN, key=key, unicode=""))
 
     def _read(self):
-        pattern = re.compile(r"key\\s+(pressed|released):\\s*(.*?)\\s*\\(", re.I)
+        pattern = re.compile(r"key\s+(pressed|released):\s*(.*?)\s*\(", re.I)
         while not self.stopping.is_set() and self.process and self.process.stdout:
             line = self.process.stdout.readline()
             if not line:
