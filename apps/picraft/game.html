@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="pt-PT"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PiCraft — Mundo</title>
+<style>
+:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;background:#101820;color:#f4f6f8;font:15px system-ui;overflow:hidden}header{height:54px;background:#172532;border-bottom:2px solid #e98a36;display:flex;align-items:center;justify-content:space-between;padding:0 14px}header b{font-size:20px}button{background:#263b4c;color:white;border:1px solid #506273;border-radius:7px;padding:8px 12px}button:focus{outline:2px solid #ffc15c}#game{display:block;width:100vw;height:calc(100dvh - 124px);touch-action:none}#bar{height:70px;background:#172532;display:flex;align-items:center;justify-content:center;gap:6px;padding:5px;flex-wrap:wrap}.slot{width:48px;height:50px;padding:3px;border:2px solid #71808b;background:#27333d}.slot.active{border:3px solid #ffc15c;background:#46515a}.swatch{display:block;width:23px;height:23px;margin:auto;border:1px solid #ffffff55}.slot small{display:block;font-size:10px;text-align:center}#hint{position:fixed;top:64px;left:10px;background:#101820bb;padding:7px 10px;border-radius:8px;max-width:75vw}#touch{position:fixed;right:10px;bottom:82px;display:grid;grid-template-columns:repeat(3,45px);gap:4px}#touch button{height:42px;background:#182a39dd;font-size:18px}#touch .empty{visibility:hidden}@media(min-width:850px){#touch{opacity:.55}} 
+</style></head><body><header><b>⛏ PiCraft · Mundo 0.1</b><div><button id="save">Guardar</button> <button id="back">Menu</button></div></header><canvas id="game"></canvas><div id="hint">Setas/WASD: mover · OK/clique: colocar · Espaço: partir bloco · 1–6: escolher bloco</div><div id="bar"></div><div id="touch"><span class="empty"></span><button data-key="ArrowUp">▲</button><span class="empty"></span><button data-key="ArrowLeft">◀</button><button data-key="Space">●</button><button data-key="ArrowRight">▶</button><span class="empty"></span><button data-key="ArrowDown">▼</button><button data-key="Enter">＋</button></div>
+<script>
+(()=>{
+const canvas=document.getElementById('game'),ctx=canvas.getContext('2d');
+const types=[
+{id:'relva',name:'Relva',top:'#72ad54',side:'#4b7d3c',edge:'#355d31'},
+{id:'terra',name:'Terra',top:'#a8754e',side:'#805339',edge:'#62402e'},
+{id:'rocha',name:'Rocha',top:'#a2a9ad',side:'#737d84',edge:'#535c62'},
+{id:'madeira',name:'Madeira',top:'#bd8a51',side:'#8b6039',edge:'#68452b'},
+{id:'areia',name:'Areia',top:'#e0cc88',side:'#b9a66c',edge:'#92814e'},
+{id:'cristal',name:'Cristal',top:'#66c7c2',side:'#398d92',edge:'#28666c'}
+];
+const W=17,H=17,world=Array.from({length:H},(_,y)=>Array.from({length:W},(_,x)=>({z:(x*7+y*11)%13===0?1:0,t:(x+y)%8===0?3:(x*3+y)%7===0?2:0})));
+let player={x:8,y:8},selected=0,aim={x:9,y:8},inventory=types.map((_,i)=>i===0?24:8),tick=0;
+const tileW=38,tileH=20,blockH=17;
+function resize(){const d=Math.min(devicePixelRatio||1,1.5);canvas.width=Math.floor(canvas.clientWidth*d);canvas.height=Math.floor(canvas.clientHeight*d);ctx.setTransform(d,0,0,d,0,0);draw()}addEventListener('resize',resize);
+function iso(x,y,z=0){return {x:canvas.clientWidth/2+(x-y)*tileW/2,y:canvas.clientHeight/2-55+(x+y)*tileH/2-z*blockH}}
+function polygon(points,fill,stroke='#00000030'){ctx.beginPath();points.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.closePath();ctx.fillStyle=fill;ctx.fill();ctx.strokeStyle=stroke;ctx.stroke()}
+function diamond(x,y,w,h,color){polygon([{x,y:y-h/2},{x:x+w/2,y},{x,y:y+h/2},{x:x-w/2,y}],color)}
+function block(x,y,z,t){const p=iso(x,y,z),b=types[t];polygon([{x:p.x,y:p.y},{x:p.x+tileW/2,y:p.y+tileH/2},{x:p.x,y:p.y+tileH},{x:p.x-tileW/2,y:p.y+tileH/2}],b.top);polygon([{x:p.x-tileW/2,y:p.y+tileH/2},{x:p.x,y:p.y+tileH},{x:p.x,y:p.y+tileH+blockH},{x:p.x-tileW/2,y:p.y+tileH/2+blockH}],b.edge);polygon([{x:p.x,y:p.y+tileH},{x:p.x+tileW/2,y:p.y+tileH/2},{x:p.x+tileW/2,y:p.y+tileH/2+blockH},{x:p.x,y:p.y+tileH+blockH}],b.side);
+ // tiny original pixel flecks
+ for(let k=0;k<3;k++){const fx=p.x+(k-1)*7,fy=p.y+tileH/2+(k%2)*4;ctx.fillStyle='#ffffff20';ctx.fillRect(fx,fy,3,2)}
+}
+function draw(){if(!ctx)return;const w=canvas.clientWidth,h=canvas.clientHeight;ctx.clearRect(0,0,w,h);const sky=ctx.createLinearGradient(0,0,0,h);sky.addColorStop(0,'#8fc4df');sky.addColorStop(1,'#d6e7d0');ctx.fillStyle=sky;ctx.fillRect(0,0,w,h);
+for(let sum=0;sum<W+H;sum++)for(let y=0;y<H;y++){const x=sum-y;if(x<0||x>=W)continue;const c=world[y][x];diamond(iso(x,y).x,iso(x,y).y+tileH/2,tileW,tileH,c.z?'#6b8d55':'#6d9c58');if(c.z)block(x,y,0,c.t)}
+// avatar is deliberately simple and original
+const p=iso(player.x,player.y,world[player.y][player.x].z);ctx.fillStyle='#263b52';ctx.fillRect(p.x-7,p.y-8,14,18);ctx.fillStyle='#e4b58d';ctx.fillRect(p.x-6,p.y-21,12,12);ctx.fillStyle='#e9d7a5';ctx.fillRect(p.x-6,p.y-20,12,3);
+const a=iso(aim.x,aim.y,world[aim.y][aim.x].z);polygon([{x:a.x,y:a.y},{x:a.x+tileW/2,y:a.y+tileH/2},{x:a.x,y:a.y+tileH},{x:a.x-tileW/2,y:a.y+tileH/2}], '#ffffff12','#fff3a0');
+ctx.fillStyle='#14202bdc';ctx.fillRect(10,h-36,190,26);ctx.fillStyle='white';ctx.font='13px system-ui';ctx.fillText('Posição '+player.x+', '+player.y+'  ·  Dia '+(1+Math.floor(tick/180)),18,h-18)}
+function sound(freq=180,dur=.07){try{const ac=new (AudioContext||webkitAudioContext)(),o=ac.createOscillator(),g=ac.createGain();o.type='square';o.frequency.value=freq;g.gain.setValueAtTime(.045,ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+dur);o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+dur);o.onended=()=>ac.close()}catch(e){}}
+function move(dx,dy){const x=Math.max(0,Math.min(W-1,player.x+dx)),y=Math.max(0,Math.min(H-1,player.y+dy));player={x,y};aim={x:Math.max(0,Math.min(W-1,x+dx)),y:Math.max(0,Math.min(H-1,y+dy))};tick++;sound(240,.035);draw()}
+function action(place){const c=world[aim.y][aim.x];if(place){if(inventory[selected]>0&&!c.z){c.z=1;c.t=selected;inventory[selected]--;sound(420,.08)}}else if(c.z){c.z=0;inventory[c.t]=(inventory[c.t]||0)+1;sound(110,.12)}draw();renderBar()}
+function renderBar(){const bar=document.getElementById('bar');bar.innerHTML='';types.forEach((t,i)=>{const b=document.createElement('button');b.className='slot'+(selected===i?' active':'');b.innerHTML='<span class="swatch" style="background:'+t.top+'"></span><small>'+t.name+' · '+inventory[i]+'</small>';b.onclick=()=>{selected=i;renderBar();sound(300)};bar.appendChild(b)})}
+addEventListener('keydown',e=>{if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' ','Enter'].includes(e.key))e.preventDefault();if(e.key==='ArrowUp'||e.key.toLowerCase()==='w')move(0,-1);if(e.key==='ArrowDown'||e.key.toLowerCase()==='s')move(0,1);if(e.key==='ArrowLeft'||e.key.toLowerCase()==='a')move(-1,0);if(e.key==='ArrowRight'||e.key.toLowerCase()==='d')move(1,0);if(e.key===' '||e.code==='Space')action(false);if(e.key==='Enter')action(true);if(/^[1-6]$/.test(e.key)){selected=+e.key-1;renderBar()}});
+document.querySelectorAll('[data-key]').forEach(b=>b.onclick=()=>{const k=b.dataset.key;if(k==='Space')action(false);else if(k==='Enter')action(true);else if(k==='ArrowUp')move(0,-1);else if(k==='ArrowDown')move(0,1);else if(k==='ArrowLeft')move(-1,0);else move(1,0)});
+canvas.addEventListener('pointerdown',e=>{const rect=canvas.getBoundingClientRect(),mx=e.clientX-rect.left,my=e.clientY-rect.top;let best=null,dist=1e9;for(let y=0;y<H;y++)for(let x=0;x<W;x++){const p=iso(x,y,world[y][x].z),d=Math.hypot(mx-p.x,my-(p.y+tileH/2));if(d<dist){dist=d;best={x,y}}}if(best){aim=best;action(e.button===2)} });canvas.addEventListener('contextmenu',e=>e.preventDefault());
+document.getElementById('save').onclick=()=>{localStorage.setItem('picraft_world_01',JSON.stringify({world,player,inventory,selected,tick}));sound(600,.1);document.getElementById('hint').textContent='Mundo guardado neste navegador.'};
+try{const s=JSON.parse(localStorage.getItem('picraft_world_01')||'null');if(s&&s.world?.length===H){for(let y=0;y<H;y++)for(let x=0;x<W;x++)world[y][x]=s.world[y][x];player=s.player||player;inventory=s.inventory||inventory;selected=s.selected||0;tick=s.tick||0}}catch(e){}
+document.getElementById('back').onclick=()=>location.href='index.html';renderBar();resize();
+})();
+</script></body></html>
