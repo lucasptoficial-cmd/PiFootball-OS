@@ -38,3 +38,8 @@ A imagem `.img` será preparada depois de a base ser testada num Raspberry Pi 2 
 - A instalação exige confirmação no ecrã e abre um terminal gráfico com `sudo apt-get` (ou usa `pkexec` se existir).
 - São aplicações Linux dos repositórios configurados no Raspberry Pi OS, não APKs Android. A disponibilidade dos pacotes depende da versão e arquitetura do sistema.
 - O browser é uma janela externa; ainda não está integrado dentro do PiFootball OS. A compatibilidade e desempenho têm de ser testados no Raspberry Pi 2.
+
+
+### Loja: atalhos Web
+
+A loja inclui atalhos para YouTube, WhatsApp Web, Instagram e Discord Web, além de pacotes Linux (NetSurf, VLC e Audacious). Os atalhos abrem no navegador externo instalado; não são aplicações nativas nem garantem compatibilidade com o browser antigo do Raspberry Pi 2. Roblox aparece apenas como informação de incompatibilidade: não existe cliente oficial para Linux. A interface e os atalhos ainda precisam de testes no hardware.
