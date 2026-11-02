@@ -20,14 +20,13 @@ SETTINGS_FILE = CONFIG_DIR / "settings.json"
 
 ITEMS = [
     ("FUTEBOL", "Jogos, resultados e competições"),
-    ("TV", "Canais e guia de programação"),
+    ("TV & IPTV", "Canais, guia e listas IPTV"),
     ("INTERNET", "Navegador e serviços online"),
     ("FILMES E SÉRIES", "Biblioteca multimédia"),
     ("APLICAÇÕES", "As tuas aplicações"),
     ("MÚSICA", "Música e rádio"),
     ("NOTÍCIAS", "Notícias desportivas"),
     ("DEFINIÇÕES", "Perfis, rede e sistema"),
-    ("IPTV", "Configurar host e lista de canais"),
 ]
 FIELDS = [
     ("Host / IP", "host"),
@@ -237,7 +236,7 @@ def main():
                     elif event.key in (pygame.K_LEFT, pygame.K_UP):
                         selected = (selected - 1) % len(ITEMS)
                     elif event.key in (pygame.K_RETURN, pygame.K_KP_ENTER):
-                        if ITEMS[selected][0] == "IPTV":
+                        if ITEMS[selected][0] == "TV & IPTV":
                             page = "iptv"
                             field_index = 0
                         elif ITEMS[selected][0] == "DEFINIÇÕES":
@@ -322,17 +321,18 @@ def main():
 
         if page == "home":
             screen.blit(big.render("O TEU CENTRO DE ENTRETENIMENTO", True, WHITE), (40, 140))
-            cols, gap, cardh = 3, 14, 112
+            screen.blit(small.render("Perfil: " + active_profile, True, GREEN), (42, 190))
+            cols, gap, cardh = 4, 14, 150
             cardw = (width - 80 - (cols - 1) * gap) // cols
             for i, (name, desc) in enumerate(ITEMS):
                 row, col = divmod(i, cols)
-                x, y = 40 + col * (cardw + gap), 225 + row * (cardh + 14)
+                x, y = 40 + col * (cardw + gap), 250 + row * (cardh + 18)
                 rect = pygame.Rect(x, y, cardw, cardh)
                 pygame.draw.rect(screen, PANEL, rect, border_radius=10)
                 if i == selected:
                     pygame.draw.rect(screen, ORANGE, rect, width=4, border_radius=10)
-                screen.blit(med.render(name, True, ORANGE if i == selected else WHITE), (x + 14, y + 20))
-                screen.blit(small.render(desc, True, MUTED), (x + 14, y + 62))
+                screen.blit(med.render(name, True, ORANGE if i == selected else WHITE), (x + 18, y + 28))
+                screen.blit(small.render(desc, True, MUTED), (x + 18, y + 78))
         elif page == "users":
             screen.blit(big.render("UTILIZADORES", True, WHITE), (42, 145))
             screen.blit(small.render("Perfil ativo: " + active_profile, True, GREEN), (46, 210))
