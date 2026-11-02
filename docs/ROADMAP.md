@@ -6,11 +6,12 @@
 - [x] Animação de arranque (preto, reflexo verde, logótipo, feixe de luz e transição laranja)
 - [x] Ecrã inicial de configuração IPTV (host, porta, utilizador e URL M3U)
 - [ ] Redesenhar o HOME final com os 8 blocos e identidade visual premium
-- [ ] Testar a animação e a interface no Raspberry Pi 2 físico
+- [ ] Testar a animação, perfis e interface no Raspberry Pi 2 físico
 - [ ] Arranque automático da interface
 
 ## Etapa 2 — Sistema
-- [ ] Perfis locais e seleção de perfil
+- [x] Perfis locais: criar, selecionar, alternar e apagar (mantendo pelo menos um)
+- [x] Definição persistente para ativar/desativar animação de arranque
 - [ ] Definições de imagem, som, rede e controlos
 - [ ] Atualizações com confirmação do utilizador
 
