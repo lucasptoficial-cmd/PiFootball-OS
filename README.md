@@ -70,3 +70,15 @@ A Loja de aplicações inclui agora duas aplicações locais:
 - **PiModCraft** (`apps/pimodcraft/index.html`): pesquisa mods no catálogo público Modrinth, filtra por loader e versão e permite descarregar ficheiros publicados. A instalação automática numa instância ainda não está implementada; é necessário colocar o `.jar` na pasta `mods` e instalar dependências.
 
 As duas aplicações abrem pelo menu APLICAÇÕES → Loja de aplicações, usando o navegador disponível. A pesquisa Modrinth necessita de Internet e de um navegador com suporte a JavaScript moderno. A compatibilidade com Raspberry Pi 2/ARMv7 não está garantida; Minecraft moderno e modpacks podem exceder os recursos do equipamento.
+
+## PiCraft — jogo voxel independente (protótipo 0.1)
+
+O PiCraft está a evoluir para um jogo próprio, sem depender do Minecraft oficial. Foi criado `apps/picraft/game.html`, um primeiro protótipo jogável com:
+- mundo voxel/isométrico gerado localmente;
+- seis materiais originais (relva, terra, rocha, madeira, areia e cristal), com paletas e texturas desenhadas pelo próprio jogo;
+- movimento por setas/WASD e controlos tácteis;
+- seleção de blocos, colocação e remoção;
+- inventário simples e efeitos sonoros sintetizados localmente;
+- gravação do mundo no armazenamento local do navegador.
+
+Abrir PiCraft e escolher **Jogar PiCraft**. Esta é uma base inicial 2D isométrica, não um motor 3D completo: ainda faltam primeira pessoa, crafting, ferramentas, mobs, iluminação, água, áudio gravado, mundos grandes e integração completa com o comando Samsung. Os sons são gerados por síntese e as texturas são originais, não recursos extraídos de outros jogos. O desempenho e os controlos têm de ser testados no Raspberry Pi 2 real.
