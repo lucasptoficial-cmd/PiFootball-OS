@@ -23,7 +23,7 @@ const extras=[
 ];
 extras.forEach((b,i)=>types.push({id:"extra_"+i,name:b[0],top:b[1],side:b[2],edge:b[3]}));
 const mobs=["Ovelha","Vaca","Porco","Galinha","Coelho","Zumbi","Esqueleto","Aranha","Golem de pedra","Slime"];
-const recipes=[["Tábuas",3,6,4],["Vidro",4,44,2],["Pedra musgosa",2,9,2],["Luz",5,45,1]];
+const recipes=[["Tábuas",3,1,6,4],["Tijolos",2,2,7,2],["Pedra lisa",2,2,8,2],["Pedra musgosa",2,2,9,2],["Vidro",4,2,43,2],["Bloco de luz",5,2,44,1],["Concreto branco",4,2,34,2],["Obsidiana",2,4,45,1]];
 const W=17,H=17,world=Array.from({length:H},(_,y)=>Array.from({length:W},(_,x)=>({z:(x*7+y*11)%13===0?1:0,t:(x+y)%8===0?3:(x*3+y)%7===0?2:0})));
 let player={x:8,y:8},selected=0,aim={x:9,y:8},inventory=types.map((_,i)=>i===0?24:(i<6?8:0)),mobList=[],tick=0,inventoryOpen=false;
 const tileW=38,tileH=20,blockH=17;
