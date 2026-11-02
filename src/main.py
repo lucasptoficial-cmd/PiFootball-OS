@@ -6,6 +6,7 @@ As credenciais secretas não são gravadas em disco.
 """
 import json
 import os
+import platform
 import shutil
 import subprocess
 from pathlib import Path
@@ -311,7 +312,7 @@ def main():
                         ("WhatsApp", "web", "https://web.whatsapp.com"),
                         ("Instagram", "web", "https://www.instagram.com"),
                         ("Discord", "web", "https://discord.com/app"),
-                        ("Roblox", "info", "Roblox não tem cliente oficial para Linux."),
+                        ("Roblox (experimental)", "roblox", "Roblox não é suportado nesta arquitetura."),
                         ("Navegador NetSurf", "pkg", "netsurf-gtk"),
                         ("Leitor multimédia VLC", "pkg", "vlc"),
                         ("Leitor de música Audacious", "pkg", "audacious"),
@@ -358,6 +359,14 @@ def main():
                                     message = "Não foi possível abrir: " + str(exc)
                             else:
                                 message = "Instala primeiro um navegador compatível."
+                        elif kind == "roblox":
+                            machine = platform.machine().lower()
+                            if machine in ("armv7l", "armv6l", "arm"):
+                                message = "Roblox bloqueado: Pi 2 usa ARMv7 32-bit; os runtimes encontrados não suportam esta arquitetura."
+                            elif machine in ("aarch64", "arm64"):
+                                message = "ARM64 detetado, mas o runtime Cordial declara ARM64 ainda experimental e sem testes em hardware real."
+                            else:
+                                message = "Arquitetura " + machine + ": é necessário verificar compatibilidade antes de instalar."
                         elif kind == "info":
                             message = target
                         else:
@@ -422,8 +431,10 @@ def main():
                     status, status_color = "APP WEB", GREEN
                 elif kind == "web":
                     status, status_color = "VERSÃO WEB", GREEN
+                elif kind == "roblox":
+                    status, status_color = "EXPERIMENTAL / INCOMPATÍVEL", ORANGE
                 elif kind == "info":
-                    status, status_color = "NÃO SUPORTADO", ORANGE
+                    status, status_color = "INFORMAÇÃO", MUTED
                 else:
                     binary = {"netsurf-gtk":"netsurf-gtk","vlc":"vlc","audacious":"audacious"}[target]
                     status = "INSTALADO" if shutil.which(binary) else "PACOTE LINUX"
