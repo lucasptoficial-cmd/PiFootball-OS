@@ -20,6 +20,7 @@ Sistema multimédia para Raspberry Pi 2 Model B (32-bit ARM).
 - Definições: setas para escolher, Enter para alterar a animação ou abrir a gestão de utilizadores, Esc para voltar.
 - Utilizadores: setas para trocar de perfil, escrever um nome e Enter para criar/selecionar, F2 para apagar o perfil ativo (mantém sempre pelo menos um).
 - IPTV: setas/Tab para mudar de campo e Enter no último campo para guardar.
+- Comando Samsung: entrada HDMI-CEC via `cec-client`; setas navegam, OK seleciona ao largar, OK mantido 5 segundos abre HOME, BACK volta. CH+/CH− são convertidos para teclas PageUp/PageDown para integração com o futuro guia de canais.
 
 Os perfis e a preferência da animação são guardados localmente em `~/.config/pifootball/`. Não existe sincronização na nuvem nem isolamento de ficheiros por utilizador nesta fase.
 
