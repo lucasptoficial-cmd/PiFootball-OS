@@ -6,6 +6,8 @@ As credenciais secretas não são gravadas em disco.
 """
 import json
 import os
+import shutil
+import subprocess
 from pathlib import Path
 from datetime import datetime
 import pygame
@@ -212,6 +214,11 @@ def main():
     field_index = 0
     settings_index = 0
     tv_selected = 0
+    app_selected = 0
+    store_selected = 0
+    browser_url = "https://duckduckgo.com"
+    pending_install = None
+    install_process = None
     profiles, active_profile = load_profiles()
     new_profile_name = ""
     settings = load_settings()
@@ -258,8 +265,70 @@ def main():
                         elif ITEMS[selected][0] == "DEFINIÇÕES":
                             page = "settings"
                             settings_index = 0
+                        elif ITEMS[selected][0] == "INTERNET":
+                            page = "browser"
+                        elif ITEMS[selected][0] == "APLICAÇÕES":
+                            page = "apps"
+                            app_selected = 0
                         else:
                             message = ITEMS[selected][0] + " — módulo em desenvolvimento"
+                elif page == "browser":
+                    if event.key == pygame.K_ESCAPE:
+                        page = "home"
+                    elif event.key == pygame.K_BACKSPACE:
+                        browser_url = browser_url[:-1]
+                    elif event.key in (pygame.K_RETURN, pygame.K_KP_ENTER):
+                        browser = shutil.which("netsurf-gtk") or shutil.which("netsurf")
+                        if browser:
+                            url = browser_url.strip()
+                            if url and "://" not in url:
+                                url = "https://" + url
+                            try:
+                                subprocess.Popen([browser, url or "https://duckduckgo.com"], start_new_session=True)
+                                message = "A abrir o navegador..."
+                            except OSError as exc:
+                                message = "Não foi possível abrir o navegador: " + str(exc)
+                        else:
+                            message = "Navegador não instalado. Abre a Loja de aplicações."
+                    elif event.unicode and event.unicode.isprintable() and len(browser_url) < 180:
+                        browser_url += event.unicode
+                elif page == "apps":
+                    if event.key == pygame.K_ESCAPE:
+                        page = "home"
+                    elif event.key in (pygame.K_UP, pygame.K_DOWN):
+                        app_selected = (app_selected + (1 if event.key == pygame.K_DOWN else -1)) % 3
+                    elif event.key in (pygame.K_RETURN, pygame.K_KP_ENTER):
+                        if app_selected == 0:
+                            page = "browser"
+                        elif app_selected == 1:
+                            page = "store"
+                            store_selected = 0
+                        else:
+                            message = "A biblioteca de aplicações está a ser preparada."
+                elif page == "store":
+                    store_apps = [("Navegador NetSurf", "netsurf-gtk"), ("Leitor multimédia VLC", "vlc"), ("Leitor de música Audacious", "audacious")]
+                    if event.key == pygame.K_ESCAPE:
+                        page = "apps"
+                        pending_install = None
+                    elif event.key in (pygame.K_UP, pygame.K_DOWN) and pending_install is None:
+                        store_selected = (store_selected + (1 if event.key == pygame.K_DOWN else -1)) % len(store_apps)
+                    elif event.key in (pygame.K_y, pygame.K_RETURN, pygame.K_KP_ENTER) and pending_install is not None:
+                        package = pending_install
+                        if shutil.which("apt-get"):
+                            try:
+                                install_process = subprocess.Popen(["sudo", "apt-get", "install", "-y", package], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
+                                message = "Instalação iniciada: " + package
+                            except OSError as exc:
+                                message = "Erro ao iniciar instalação: " + str(exc)
+                        else:
+                            message = "A loja requer Raspberry Pi OS/Debian com apt."
+                        pending_install = None
+                    elif event.key in (pygame.K_n, pygame.K_ESCAPE):
+                        pending_install = None
+                    elif event.key == pygame.K_RETURN and pending_install is None:
+                        pending_install = store_apps[store_selected][1]
+                    elif event.key == pygame.K_BACKSPACE:
+                        pending_install = None
                 elif page == "tv":
                     if event.key == pygame.K_ESCAPE:
                         page = "home"
@@ -273,7 +342,49 @@ def main():
                             field_index = 0
                         else:
                             message = "O guia de canais ainda está em desenvolvimento."
-                elif page == "settings":
+                elif page == "browser":
+            screen.blit(big.render("NAVEGADOR", True, WHITE), (42, 145))
+            screen.blit(small.render("Endereço Web — o navegador abre numa janela própria", True, MUTED), (46, 205))
+            rect = pygame.Rect(44, 270, min(width - 88, 1080), 76)
+            pygame.draw.rect(screen, PANEL, rect, border_radius=9)
+            pygame.draw.rect(screen, ORANGE, rect, width=3, border_radius=9)
+            screen.blit(med.render(browser_url[-75:] or "Escreve um endereço...", True, WHITE), (rect.x + 18, rect.y + 22))
+            installed = bool(shutil.which("netsurf-gtk") or shutil.which("netsurf"))
+            state = "NetSurf instalado" if installed else "NetSurf não instalado — usa a Loja de aplicações"
+            screen.blit(small.render(state, True, GREEN if installed else ORANGE), (46, 375))
+            screen.blit(small.render("Escreve o endereço · ENTER: abrir · BACKSPACE: apagar · BACK: voltar", True, MUTED), (44, height - 55))
+        elif page == "apps":
+            screen.blit(big.render("APLICAÇÕES", True, WHITE), (42, 145))
+            screen.blit(small.render("Aplicações compatíveis com Raspberry Pi OS", True, MUTED), (46, 205))
+            options = [("Navegador", "Abrir um endereço Web"), ("Loja de aplicações", "Instalar programas compatíveis"), ("Mais aplicações", "Em desenvolvimento")]
+            for i, (label, desc) in enumerate(options):
+                y = 260 + i * 105
+                rect = pygame.Rect(44, y, min(width - 88, 900), 82)
+                pygame.draw.rect(screen, PANEL, rect, border_radius=9)
+                if i == app_selected:
+                    pygame.draw.rect(screen, ORANGE, rect, width=3, border_radius=9)
+                screen.blit(med.render(label, True, WHITE), (rect.x + 18, rect.y + 12))
+                screen.blit(small.render(desc, True, MUTED), (rect.x + 18, rect.y + 49))
+            screen.blit(small.render("Setas: escolher   OK: abrir   BACK: voltar", True, MUTED), (44, height - 55))
+        elif page == "store":
+            screen.blit(big.render("LOJA DE APLICAÇÕES", True, WHITE), (42, 145))
+            screen.blit(small.render("Pacotes dos repositórios Debian/Raspberry Pi OS", True, MUTED), (46, 205))
+            store_apps = [("Navegador NetSurf", "netsurf-gtk"), ("Leitor multimédia VLC", "vlc"), ("Leitor de música Audacious", "audacious")]
+            for i, (label, package) in enumerate(store_apps):
+                y = 250 + i * 90
+                rect = pygame.Rect(44, y, min(width - 88, 900), 70)
+                pygame.draw.rect(screen, PANEL, rect, border_radius=9)
+                if i == store_selected and pending_install is None:
+                    pygame.draw.rect(screen, ORANGE, rect, width=3, border_radius=9)
+                installed = bool(shutil.which({"netsurf-gtk":"netsurf-gtk","vlc":"vlc","audacious":"audacious"}[package]))
+                status = "INSTALADO" if installed else "DISPONÍVEL"
+                screen.blit(med.render(label, True, WHITE), (rect.x + 18, rect.y + 20))
+                screen.blit(small.render(status, True, GREEN if installed else MUTED), (rect.right - 150, rect.y + 25))
+            if pending_install:
+                screen.blit(small.render("Confirmas instalar " + pending_install + "? OK/SIM confirma · N cancela", True, ORANGE), (44, height - 92))
+            else:
+                screen.blit(small.render("OK: preparar instalação · BACK: voltar", True, MUTED), (44, height - 55))
+        elif page == "settings":
                     if event.key == pygame.K_ESCAPE:
                         page = "home"
                     elif event.key in (pygame.K_UP, pygame.K_DOWN):
