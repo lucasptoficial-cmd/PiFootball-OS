@@ -52,3 +52,8 @@ A entrada YouTube tenta abrir o Chromium em modo `--app=https://www.youtube.com`
 ### Roblox no Linux — investigação
 
 A Roblox declara oficialmente que o cliente não é suportado em Linux. Foram encontrados projetos comunitários como Sober e TuxBlox, mas os requisitos publicados são incompatíveis com o Raspberry Pi 2: Sober requer x86_64/SSE4.2 e TuxBlox indica x86-64, 8 GB RAM e kernel Linux recente. Portanto, Roblox fica catalogado como não compatível com este hardware, sem botão de instalação enganador.
+
+
+### Roblox — verificação de arquitetura
+
+A loja apresenta Roblox como experimental e faz uma verificação local da arquitetura antes de qualquer tentativa. No Raspberry Pi 2 (ARMv7/32-bit), bloqueia a tentativa porque os runtimes comunitários investigados exigem x86-64 ou, no caso do Cordial, no máximo aarch64 em desenvolvimento; ARMv7 não está suportado. Não existe um pacote otimizado que transforme o binário Android ARM64/x86-64 num programa ARMv7. Reduzir efeitos ou serviços do PiFootball OS não resolve a incompatibilidade de ABI. A Roblox também declara que Linux não é suportado oficialmente.
