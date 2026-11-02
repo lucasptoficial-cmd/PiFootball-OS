@@ -16,6 +16,7 @@ WHITE=(242,244,247); MUTED=(153,160,170); GREEN=(75,190,125)
 CONFIG_DIR = Path.home() / ".config" / "pifootball"
 IPTV_FILE = CONFIG_DIR / "iptv.json"
 PROFILES_FILE = CONFIG_DIR / "profiles.json"
+SETTINGS_FILE = CONFIG_DIR / "settings.json"
 
 ITEMS = [
     ("FUTEBOL", "Jogos, resultados e competições"),
@@ -70,6 +71,23 @@ def save_profiles(names, active):
     PROFILES_FILE.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
     try:
         os.chmod(PROFILES_FILE, 0o600)
+    except OSError:
+        pass
+
+def load_settings():
+    defaults = {"boot_animation": True}
+    try:
+        data = json.loads(SETTINGS_FILE.read_text(encoding="utf-8"))
+        defaults.update({k: data[k] for k in defaults if k in data})
+    except (OSError, ValueError, TypeError):
+        pass
+    return defaults
+
+def save_settings(settings):
+    CONFIG_DIR.mkdir(parents=True, exist_ok=True)
+    SETTINGS_FILE.write_text(json.dumps(settings, ensure_ascii=False, indent=2), encoding="utf-8")
+    try:
+        os.chmod(SETTINGS_FILE, 0o600)
     except OSError:
         pass
 
@@ -195,11 +213,12 @@ def main():
     field_index = 0
     profiles, active_profile = load_profiles()
     new_profile_name = ""
+    settings = load_settings()
     config = load_iptv()
     password = ""
     message = "Bem-vindo ao PiFootball OS"
     goal_alert_started = None
-    running = draw_boot_animation(screen, clock)
+    running = draw_boot_animation(screen, clock) if settings["boot_animation"] else True
 
     while running:
         width, height = screen.get_size()
@@ -228,6 +247,25 @@ def main():
                 elif page == "users":
                     if event.key == pygame.K_ESCAPE:
                         page = "home"
+                    elif event.key in (pygame.K_UP, pygame.K_DOWN):
+                        if profiles:
+                            current = profiles.index(active_profile) if active_profile in profiles else 0
+                            step = -1 if event.key == pygame.K_UP else 1
+                            active_profile = profiles[(current + step) % len(profiles)]
+                            save_profiles(profiles, active_profile)
+                            message = "Utilizador ativo: " + active_profile
+                    elif event.key == pygame.K_F2:
+                        if len(profiles) > 1:
+                            profiles.remove(active_profile)
+                            active_profile = profiles[0]
+                            save_profiles(profiles, active_profile)
+                            message = "Perfil removido. Ativo: " + active_profile
+                        else:
+                            message = "Mantém pelo menos um perfil."
+                    elif event.key == pygame.K_F5:
+                        settings["boot_animation"] = not settings["boot_animation"]
+                        save_settings(settings)
+                        message = "Animação de arranque " + ("ativada" if settings["boot_animation"] else "desativada")
                     elif event.key == pygame.K_BACKSPACE:
                         new_profile_name = new_profile_name[:-1]
                     elif event.key in (pygame.K_RETURN, pygame.K_KP_ENTER):
@@ -307,10 +345,12 @@ def main():
             pygame.draw.rect(screen, ORANGE, box, 2, border_radius=8)
             screen.blit(small.render("Criar ou selecionar perfil", True, MUTED), (box.x + 14, box.y + 8))
             screen.blit(med.render(new_profile_name or "Escreve um nome...", True, WHITE), (box.x + 14, box.y + 36))
-            screen.blit(small.render("ENTER: criar/selecionar   BACKSPACE: apagar   ESC: voltar", True, MUTED), (44, height - 62))
+            screen.blit(small.render("Cima/baixo: trocar perfil   ENTER: criar/selecionar   F2: apagar perfil", True, MUTED), (44, height - 92))
+            screen.blit(small.render("F5: animação de arranque " + ("ATIVADA" if settings["boot_animation"] else "DESATIVADA") + "   ESC: voltar", True, MUTED), (44, height - 62))
             screen.blit(small.render("Os perfis são guardados localmente neste Raspberry Pi.", True, GREEN), (44, height - 34))
         else:
-            screen.blit(big.render("CONFIGURAR IPTV", True, WHITE), (42, 145))            screen.blit(small.render("Introduz os dados fornecidos pelo teu serviço IPTV autorizado.", True, MUTED), (44, 205))
+            screen.blit(big.render("CONFIGURAR IPTV", True, WHITE), (42, 145))
+            screen.blit(small.render("Introduz os dados fornecidos pelo teu serviço IPTV autorizado.", True, MUTED), (44, 205))
             for i, (label, key) in enumerate(FIELDS):
                 y = 250 + i * 72
                 active = i == field_index
