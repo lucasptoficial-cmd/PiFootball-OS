@@ -406,7 +406,9 @@ def main():
         pygame.display.flip()
         clock.tick(30)
 
-    if remote is not None:\n        remote.stop()\n    pygame.quit()
+    if remote is not None:
+        remote.stop()
+    pygame.quit()
 
 if __name__ == "__main__":
     main()
