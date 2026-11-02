@@ -439,7 +439,7 @@ def main():
             ]
             for i, (label, kind, target) in enumerate(store_apps):
                 col, row = i % 2, i // 2
-                rect = pygame.Rect(44 + col * 510, 210 + row * 105, min(480, (width - 110) // 2), 82)
+                rect = pygame.Rect(44 + col * 510, 190 + row * 82, min(480, (width - 110) // 2), 82)
                 pygame.draw.rect(screen, PANEL, rect, border_radius=9)
                 if i == store_selected and pending_install is None:
                     pygame.draw.rect(screen, ORANGE, rect, width=3, border_radius=9)
