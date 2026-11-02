@@ -16,7 +16,9 @@ Sistema multimédia para Raspberry Pi 2 Model B (32-bit ARM).
 4. Iniciar com `bash scripts/run.sh`.
 
 ## Controlos
-- HOME: setas para navegar, Enter para abrir e Esc para sair.
+- HOME: setas para navegar, OK para abrir e BACK para voltar.
+- TV & IPTV: abre um menu com configuração IPTV e entrada para o futuro guia de canais.
+- HDMI-CEC: setas, OK, BACK e OK mantido 5 segundos para HOME; CH+/CH− são encaminhados como PageUp/PageDown.
 - Definições: setas para escolher, Enter para alterar a animação ou abrir a gestão de utilizadores, Esc para voltar.
 - Utilizadores: setas para trocar de perfil, escrever um nome e Enter para criar/selecionar, F2 para apagar o perfil ativo (mantém sempre pelo menos um).
 - IPTV: setas/Tab para mudar de campo e Enter no último campo para guardar.
