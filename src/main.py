@@ -307,7 +307,7 @@ def main():
                             message = "A biblioteca de aplicações está a ser preparada."
                 elif page == "store":
                     store_apps = [
-                        ("YouTube", "web", "https://www.youtube.com"),
+                        ("YouTube", "youtube", "https://www.youtube.com"),
                         ("WhatsApp", "web", "https://web.whatsapp.com"),
                         ("Instagram", "web", "https://www.instagram.com"),
                         ("Discord", "web", "https://discord.com/app"),
@@ -343,12 +343,17 @@ def main():
                         pending_install = None
                     elif event.key == pygame.K_RETURN and pending_install is None:
                         label, kind, target = store_apps[store_selected]
-                        if kind == "web":
-                            browser = shutil.which("netsurf-gtk") or shutil.which("netsurf") or shutil.which("chromium-browser") or shutil.which("chromium")
+                        if kind in ("web", "youtube"):
+                            chromium = shutil.which("chromium") or shutil.which("chromium-browser")
+                            browser = chromium or shutil.which("firefox") or shutil.which("netsurf-gtk") or shutil.which("netsurf")
                             if browser:
                                 try:
-                                    subprocess.Popen([browser, target], start_new_session=True)
-                                    message = "A abrir " + label + " no navegador..."
+                                    if kind == "youtube" and chromium:
+                                        subprocess.Popen([chromium, "--app=" + target, "--no-first-run"], start_new_session=True)
+                                        message = "A abrir YouTube como aplicação..."
+                                    else:
+                                        subprocess.Popen([browser, target], start_new_session=True)
+                                        message = "A abrir " + label + " no navegador..."
                                 except OSError as exc:
                                     message = "Não foi possível abrir: " + str(exc)
                             else:
@@ -413,7 +418,9 @@ def main():
                 pygame.draw.rect(screen, PANEL, rect, border_radius=9)
                 if i == store_selected and pending_install is None:
                     pygame.draw.rect(screen, ORANGE, rect, width=3, border_radius=9)
-                if kind == "web":
+                if kind == "youtube":
+                    status, status_color = "APP WEB", GREEN
+                elif kind == "web":
                     status, status_color = "VERSÃO WEB", GREEN
                 elif kind == "info":
                     status, status_color = "NÃO SUPORTADO", ORANGE
