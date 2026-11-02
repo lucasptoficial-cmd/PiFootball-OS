@@ -1,8 +1,9 @@
-# Roteiro
+# Roteiro de desenvolvimento
 
 ## Etapa 1 — Base
 - [x] Repositório e estrutura inicial
 - [x] Interface navegável por teclado
+- [x] Ecrã inicial de configuração IPTV (host, porta, utilizador e URL M3U)
 - [ ] Testar no Raspberry Pi 2 físico
 - [ ] Arranque automático da interface
 
@@ -12,10 +13,12 @@
 - [ ] Atualizações com confirmação do utilizador
 
 ## Etapa 3 — Conteúdo
-- [ ] IPTV integrada: host/IP, porta, credenciais, M3U e Xtream
+- [ ] IPTV: ligação real a serviços autorizados, autenticação segura e reprodução
+- [ ] Suporte Xtream Codes e M3U/M3U8 completo
 - [ ] Futebol: resultados e calendário com fontes permitidas
 - [ ] TV: canais e streams oficiais
 - [ ] Aplicações compatíveis com ARM 32-bit
+- [ ] Música e rádio
 
 ## Etapa 4 — Imagem
 - [ ] Construção de imagem Raspberry Pi OS Lite 32-bit
