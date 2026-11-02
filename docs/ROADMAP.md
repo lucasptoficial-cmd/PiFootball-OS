@@ -6,6 +6,8 @@
 - [x] Animação de arranque (preto, reflexo verde, logótipo, feixe de luz e transição laranja)
 - [x] Ecrã inicial de configuração IPTV (host, porta, utilizador e URL M3U)
 - [ ] Redesenhar o HOME final com os 8 blocos e identidade visual premium
+- [x] Primeira integração HDMI-CEC: descodificador de teclas Samsung via cec-client e atalho OK mantido 5 segundos para HOME
+- [ ] Testar a integração HDMI-CEC com a Samsung TQ55S90DAE e o Raspberry Pi 2 físico
 - [ ] Testar a animação, perfis e interface no Raspberry Pi 2 físico
 - [ ] Arranque automático da interface
 
