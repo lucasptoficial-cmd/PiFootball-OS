@@ -240,22 +240,9 @@ def main():
         remote = None
         cec_status = "Comando CEC indisponível: " + str(exc)
 
-    try:
-        from nplay_gamepad import NPlayGamepads
-        gamepads = NPlayGamepads(pygame)
-    except Exception as exc:
-        gamepads = None
-        gamepad_status = "Comando NPlay indisponível: " + str(exc)
-
     while running:
         width, height = screen.get_size()
         for event in pygame.event.get():
-            if gamepads is not None and event.type in (
-                pygame.JOYDEVICEADDED, pygame.JOYDEVICEREMOVED,
-                pygame.JOYBUTTONDOWN, pygame.JOYHATMOTION,
-                pygame.JOYAXISMOTION
-            ):
-                gamepads.handle_event(event)
             if event.type == pygame.QUIT:
                 running = False
             elif event.type == cec_home_event:
@@ -646,21 +633,11 @@ def main():
 
         pygame.draw.rect(screen, PANEL, (0, height - 48, width, 48))
         screen.blit(small.render(message, True, WHITE), (20, height - 31))
-        if page == "home":
-            hint_text = "Samsung: setas/OK/BACK"
-            if gamepads is not None and gamepads.devices:
-                hint_text += "  ·  " + gamepads.status[:42]
-            else:
-                hint_text += "  ·  NPlay: liga por USB ou Bluetooth"
-            hint = small.render(hint_text, True, MUTED)
-            screen.blit(hint, (width - hint.get_width() - 20, height - 31))
         pygame.display.flip()
         clock.tick(30)
 
     if remote is not None:
         remote.stop()
-    if gamepads is not None:
-        gamepads.close()
     pygame.quit()
 
 if __name__ == "__main__":
