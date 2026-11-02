@@ -211,6 +211,7 @@ def main():
     page = "home"
     field_index = 0
     settings_index = 0
+    tv_selected = 0
     profiles, active_profile = load_profiles()
     new_profile_name = ""
     settings = load_settings()
@@ -252,13 +253,26 @@ def main():
                         selected = (selected - 1) % len(ITEMS)
                     elif event.key in (pygame.K_RETURN, pygame.K_KP_ENTER):
                         if ITEMS[selected][0] == "TV & IPTV":
-                            page = "iptv"
-                            field_index = 0
+                            page = "tv"
+                            tv_selected = 0
                         elif ITEMS[selected][0] == "DEFINIÇÕES":
                             page = "settings"
                             settings_index = 0
                         else:
                             message = ITEMS[selected][0] + " — módulo em desenvolvimento"
+                elif page == "tv":
+                    if event.key == pygame.K_ESCAPE:
+                        page = "home"
+                    elif event.key in (pygame.K_UP, pygame.K_DOWN):
+                        tv_selected = (tv_selected + (1 if event.key == pygame.K_DOWN else -1)) % 2
+                    elif event.key in (pygame.K_PAGEUP, pygame.K_PAGEDOWN):
+                        message = "A mudança de canal ficará disponível quando existir uma lista de canais."
+                    elif event.key in (pygame.K_RETURN, pygame.K_KP_ENTER):
+                        if tv_selected == 0:
+                            page = "iptv"
+                            field_index = 0
+                        else:
+                            message = "O guia de canais ainda está em desenvolvimento."
                 elif page == "settings":
                     if event.key == pygame.K_ESCAPE:
                         page = "home"
@@ -356,6 +370,33 @@ def main():
                     pygame.draw.rect(screen, ORANGE, rect, width=4, border_radius=10)
                 screen.blit(med.render(name, True, ORANGE if i == selected else WHITE), (x + 18, y + 28))
                 screen.blit(small.render(desc, True, MUTED), (x + 18, y + 78))
+        elif page == "settings":
+            screen.blit(big.render("DEFINIÇÕES", True, WHITE), (42, 145))
+            screen.blit(small.render("Configuração geral do PiFootball OS", True, MUTED), (46, 205))
+            options = [("Animação de arranque", "ATIVADA" if settings["boot_animation"] else "DESATIVADA"), ("Gerir utilizadores", "ABRIR")]
+            for i, (label, value) in enumerate(options):
+                y = 270 + i * 100
+                rect = pygame.Rect(44, y, min(width - 88, 900), 76)
+                pygame.draw.rect(screen, PANEL, rect, border_radius=9)
+                if i == settings_index:
+                    pygame.draw.rect(screen, ORANGE, rect, width=3, border_radius=9)
+                screen.blit(med.render(label, True, WHITE), (rect.x + 18, rect.y + 20))
+                val = small.render(value, True, GREEN if i == 0 else ORANGE)
+                screen.blit(val, (rect.right - val.get_width() - 20, rect.y + 27))
+            screen.blit(small.render("Setas: escolher   OK: alterar/abrir   BACK: voltar", True, MUTED), (44, height - 55))
+        elif page == "tv":
+            screen.blit(big.render("TV & IPTV", True, WHITE), (42, 145))
+            screen.blit(small.render("Escolhe uma função de televisão", True, MUTED), (46, 205))
+            tv_options = [("Configurar IPTV", "Dados do teu fornecedor autorizado"), ("Guia de canais", "Ainda não disponível")]
+            for i, (label, desc) in enumerate(tv_options):
+                y = 270 + i * 100
+                rect = pygame.Rect(44, y, min(width - 88, 900), 76)
+                pygame.draw.rect(screen, PANEL, rect, border_radius=9)
+                if i == tv_selected:
+                    pygame.draw.rect(screen, ORANGE, rect, width=3, border_radius=9)
+                screen.blit(med.render(label, True, WHITE), (rect.x + 18, rect.y + 12))
+                screen.blit(small.render(desc, True, MUTED), (rect.x + 18, rect.y + 47))
+            screen.blit(small.render("Setas: escolher   OK: abrir   BACK: voltar", True, MUTED), (44, height - 55))
         elif page == "users":
             screen.blit(big.render("UTILIZADORES", True, WHITE), (42, 145))
             screen.blit(small.render("Perfil ativo: " + active_profile, True, GREEN), (46, 210))
