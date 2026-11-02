@@ -67,7 +67,8 @@ class SamsungRemote:
                 continue
             if action.lower() == "pressed":
                 if name == "select":
-                    self.ok_started = time.monotonic()
+                    if self.ok_started is None:
+                        self.ok_started = time.monotonic()
                 elif name not in ("home",):
                     self._post_key(name)
             elif name == "select" and self.ok_started is not None:
