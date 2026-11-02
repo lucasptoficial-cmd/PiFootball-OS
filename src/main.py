@@ -174,6 +174,7 @@ def main():
     config = load_iptv()
     password = ""
     message = "Bem-vindo ao PiFootball OS"
+    goal_alert_started = None
     running = draw_boot_animation(screen, clock)
 
     while running:
@@ -185,6 +186,9 @@ def main():
                 if page == "home":
                     if event.key in (pygame.K_ESCAPE, pygame.K_q):
                         running = False
+                    elif event.key == pygame.K_F9:
+                        goal_alert_started = pygame.time.get_ticks()
+                        message = "Demonstração de alerta de golo"
                     elif event.key in (pygame.K_RIGHT, pygame.K_DOWN):
                         selected = (selected + 1) % len(ITEMS)
                     elif event.key in (pygame.K_LEFT, pygame.K_UP):
