@@ -210,6 +210,7 @@ def main():
     selected = 0
     page = "home"
     field_index = 0
+    settings_index = 0
     profiles, active_profile = load_profiles()
     new_profile_name = ""
     settings = load_settings()
@@ -240,10 +241,37 @@ def main():
                             page = "iptv"
                             field_index = 0
                         elif ITEMS[selected][0] == "DEFINIÇÕES":
-                            page = "users"
+                            page = "settings"
+                            settings_index = 0
                         else:
                             message = ITEMS[selected][0] + " — módulo em desenvolvimento"
-                elif page == "users":
+                elif page == "settings":
+                    if event.key == pygame.K_ESCAPE:
+                        page = "home"
+                    elif event.key in (pygame.K_UP, pygame.K_DOWN):
+                        settings_index = (settings_index + (1 if event.key == pygame.K_DOWN else -1)) % 2
+                    elif event.key in (pygame.K_RETURN, pygame.K_KP_ENTER):
+                        if settings_index == 0:
+                            settings["boot_animation"] = not settings["boot_animation"]
+                            save_settings(settings)
+                            message = "Animação de arranque " + ("ativada" if settings["boot_animation"] else "desativada")
+                        else:
+                            page = "users"
+                elif page == "settings":
+            screen.blit(big.render("DEFINIÇÕES", True, WHITE), (42, 145))
+            screen.blit(small.render("Configuração geral do PiFootball OS", True, MUTED), (46, 205))
+            options = [("Animação de arranque", "ATIVADA" if settings["boot_animation"] else "DESATIVADA"), ("Gerir utilizadores", "ABRIR")]
+            for i, (label, value) in enumerate(options):
+                y = 270 + i * 100
+                rect = pygame.Rect(44, y, min(width - 88, 900), 76)
+                pygame.draw.rect(screen, PANEL, rect, border_radius=9)
+                if i == settings_index:
+                    pygame.draw.rect(screen, ORANGE, rect, width=3, border_radius=9)
+                screen.blit(med.render(label, True, WHITE), (rect.x + 18, rect.y + 20))
+                val = small.render(value, True, GREEN if i == 0 else ORANGE)
+                screen.blit(val, (rect.right - val.get_width() - 20, rect.y + 27))
+            screen.blit(small.render("CIMA/BAIXO: escolher   ENTER: alterar/abrir   ESC: voltar", True, MUTED), (44, height - 55))
+        elif page == "users":
                     if event.key == pygame.K_ESCAPE:
                         page = "home"
                     elif event.key in (pygame.K_UP, pygame.K_DOWN):
