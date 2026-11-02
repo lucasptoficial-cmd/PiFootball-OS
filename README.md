@@ -16,8 +16,12 @@ Sistema multimédia para Raspberry Pi 2 Model B (32-bit ARM).
 4. Iniciar com `bash scripts/run.sh`.
 
 ## Controlos
-Setas para navegar, Enter para selecionar e Esc para sair.
+- HOME: setas para navegar, Enter para abrir e Esc para sair.
+- Utilizadores: setas para trocar de perfil, escrever um nome e Enter para criar/selecionar, F2 para apagar o perfil ativo (mantém sempre pelo menos um), F5 para alternar a animação de arranque.
+- IPTV: setas/Tab para mudar de campo e Enter no último campo para guardar.
 
-A aplicação IPTV está prevista como funcionalidade integrada: configuração de host/IP, porta, utilizador, palavra-passe e listas M3U/Xtream de fornecedores autorizados. Ainda não está implementada.
+Os perfis e a preferência da animação são guardados localmente em `~/.config/pifootball/`. Não existe sincronização na nuvem nem isolamento de ficheiros por utilizador nesta fase.
+
+O ecrã IPTV permite preencher e guardar host/IP, porta, utilizador e URL M3U de um fornecedor autorizado; ainda não estabelece ligação nem reproduz canais. A palavra-passe permanece apenas na memória da sessão e não é guardada.
 
 A imagem `.img` será preparada depois de a base ser testada num Raspberry Pi 2 real.
