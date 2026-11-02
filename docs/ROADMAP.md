@@ -3,8 +3,10 @@
 ## Etapa 1 — Base
 - [x] Repositório e estrutura inicial
 - [x] Interface navegável por teclado
+- [x] Animação de arranque (preto, reflexo verde, logótipo, feixe de luz e transição laranja)
 - [x] Ecrã inicial de configuração IPTV (host, porta, utilizador e URL M3U)
-- [ ] Testar no Raspberry Pi 2 físico
+- [ ] Redesenhar o HOME final com os 8 blocos e identidade visual premium
+- [ ] Testar a animação e a interface no Raspberry Pi 2 físico
 - [ ] Arranque automático da interface
 
 ## Etapa 2 — Sistema
