@@ -308,6 +308,8 @@ def main():
                             message = "A biblioteca de aplicações está a ser preparada."
                 elif page == "store":
                     store_apps = [
+                        ("PiCraft — Minecraft", "picraft", "apps/picraft/index.html"),
+                        ("PiModCraft — Loja de mods", "pimodcraft", "apps/pimodcraft/index.html"),
                         ("PiTube — YouTube TV", "pitube", "apps/pitube/index.html"),
                         ("YouTube (site)", "youtube", "https://www.youtube.com"),
                         ("WhatsApp", "web", "https://web.whatsapp.com"),
@@ -345,21 +347,21 @@ def main():
                         pending_install = None
                     elif event.key == pygame.K_RETURN and pending_install is None:
                         label, kind, target = store_apps[store_selected]
-                        if kind in ("web", "youtube", "pitube"):
+                        if kind in ("web", "youtube", "pitube", "picraft", "pimodcraft"):
                             chromium = shutil.which("chromium") or shutil.which("chromium-browser")
                             browser = chromium or shutil.which("firefox") or shutil.which("netsurf-gtk") or shutil.which("netsurf")
                             if browser:
                                 try:
-                                    if kind == "pitube":
+                                    if kind in ("pitube", "picraft", "pimodcraft"):
                                         app_file = (Path(__file__).resolve().parents[1] / target).resolve()
                                         if not app_file.is_file():
-                                            raise FileNotFoundError("Não encontrei apps/pitube/index.html")
+                                            raise FileNotFoundError("Não encontrei o ficheiro da aplicação: " + target)
                                         app_url = app_file.as_uri()
                                         if chromium:
                                             subprocess.Popen([chromium, "--app=" + app_url, "--no-first-run", "--disable-session-crashed-bubble"], start_new_session=True)
                                         else:
                                             subprocess.Popen([browser, app_url], start_new_session=True)
-                                        message = "A abrir PiTube — interface YouTube TV..."
+                                        message = "A abrir " + label + "..."
                                     elif kind == "youtube" and chromium:
                                         subprocess.Popen([chromium, "--app=" + target, "--no-first-run"], start_new_session=True)
                                         message = "A abrir YouTube como aplicação..."
@@ -423,6 +425,8 @@ def main():
             screen.blit(big.render("LOJA DE APLICAÇÕES", True, WHITE), (42, 112))
             screen.blit(small.render("REDES, ENTRETENIMENTO E PROGRAMAS LINUX", True, MUTED), (46, 166))
             store_apps = [
+                ("PiCraft — Minecraft", "picraft", "apps/picraft/index.html"),
+                ("PiModCraft — Mods", "pimodcraft", "apps/pimodcraft/index.html"),
                 ("PiTube", "pitube", "apps/pitube/index.html"),
                 ("YouTube", "web", "https://www.youtube.com"),
                 ("WhatsApp", "web", "https://web.whatsapp.com"),
@@ -439,7 +443,9 @@ def main():
                 pygame.draw.rect(screen, PANEL, rect, border_radius=9)
                 if i == store_selected and pending_install is None:
                     pygame.draw.rect(screen, ORANGE, rect, width=3, border_radius=9)
-                if kind == "pitube":
+                if kind in ("picraft", "pimodcraft"):
+                    status, status_color = "APP LOCAL", GREEN
+                elif kind == "pitube":
                     status, status_color = "INTERFACE TV", GREEN
                 elif kind == "youtube":
                     status, status_color = "APP WEB", GREEN
