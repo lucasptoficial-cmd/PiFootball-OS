@@ -43,3 +43,12 @@ A imagem `.img` será preparada depois de a base ser testada num Raspberry Pi 2 
 ### Loja: atalhos Web
 
 A loja inclui atalhos para YouTube, WhatsApp Web, Instagram e Discord Web, além de pacotes Linux (NetSurf, VLC e Audacious). Os atalhos abrem no navegador externo instalado; não são aplicações nativas nem garantem compatibilidade com o browser antigo do Raspberry Pi 2. Roblox aparece apenas como informação de incompatibilidade: não existe cliente oficial para Linux. A interface e os atalhos ainda precisam de testes no hardware.
+
+
+### YouTube como aplicação
+
+A entrada YouTube tenta abrir o Chromium em modo `--app=https://www.youtube.com`, numa janela dedicada, se o Chromium estiver instalado; caso contrário, usa o navegador disponível. Isto é uma aplicação Web em janela própria, não um cliente oficial nativo do YouTube. O Raspberry Pi 2 (ARMv7/32-bit, 1 GB RAM) pode ter limitações importantes de desempenho e reprodução; testar no equipamento é obrigatório.
+
+### Roblox no Linux — investigação
+
+A Roblox declara oficialmente que o cliente não é suportado em Linux. Foram encontrados projetos comunitários como Sober e TuxBlox, mas os requisitos publicados são incompatíveis com o Raspberry Pi 2: Sober requer x86_64/SSE4.2 e TuxBlox indica x86-64, 8 GB RAM e kernel Linux recente. Portanto, Roblox fica catalogado como não compatível com este hardware, sem botão de instalação enganador.
