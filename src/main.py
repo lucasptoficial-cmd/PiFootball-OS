@@ -136,6 +136,30 @@ def draw_boot_animation(screen, clock):
         clock.tick(30)
 
 
+def draw_goal_placeholder(screen, elapsed_ms):
+    """Alerta temporário de golo desenhado pelo Pygame; será substituído pelo GIF do utilizador."""
+    width, height = screen.get_size()
+    overlay = pygame.Surface((width, height), pygame.SRCALPHA)
+    pulse = 0.5 + 0.5 * __import__("math").sin(elapsed_ms / 110)
+    overlay.fill((0, 0, 0, int(175 + 45 * pulse)))
+    screen.blit(overlay, (0, 0))
+    center = (width // 2, height // 2)
+    radius = int(95 + 14 * pulse)
+    pygame.draw.circle(screen, (255, 126, 35), center, radius, 7)
+    pygame.draw.circle(screen, (255, 205, 95), center, radius + 15, 2)
+    title_font = pygame.font.Font(None, 112)
+    info_font = pygame.font.Font(None, 38)
+    small_font = pygame.font.Font(None, 24)
+    for text_value, font_obj, color, offset in [
+        ("GOLO!", title_font, (255,255,255), -25),
+        ("A TUA EQUIPA", info_font, (255,145,55), 55),
+        ("1  -  0", info_font, (255,255,255), 100),
+        ("DEMO  •  ALERTA TEMPORÁRIO", small_font, (190,198,205), 155),
+    ]:
+        surf = font_obj.render(text_value, True, color)
+        screen.blit(surf, surf.get_rect(center=(center[0], center[1] + offset)))
+
+
 def main():
     pygame.init()
     pygame.display.set_caption("PiFootball OS")
@@ -239,6 +263,13 @@ def main():
             screen.blit(small.render("ENTER no último campo: guardar configuração   TAB/setas: mudar campo   ESC: voltar", True, MUTED), (44, height - 92))
             screen.blit(small.render("A palavra-passe fica apenas na memória desta sessão e não é guardada.", True, GREEN), (44, height - 62))
             screen.blit(small.render("Nota: esta versão guarda os dados básicos; ainda não liga nem reproduz canais.", True, MUTED), (44, height - 34))
+
+        if goal_alert_started is not None:
+            goal_elapsed = pygame.time.get_ticks() - goal_alert_started
+            if goal_elapsed < 4500:
+                draw_goal_placeholder(screen, goal_elapsed)
+            else:
+                goal_alert_started = None
 
         pygame.draw.rect(screen, PANEL, (0, height - 48, width, 48))
         screen.blit(small.render(message, True, WHITE), (20, height - 31))
