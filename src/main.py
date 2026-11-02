@@ -51,6 +51,91 @@ def save_iptv(data):
     except OSError:
         pass
 
+def draw_boot_animation(screen, clock):
+    """Animação de arranque integrada no sistema, antes do HOME."""
+    width, height = screen.get_size()
+    title_font = pygame.font.Font(None, 104)
+    subtitle_font = pygame.font.Font(None, 30)
+    status_font = pygame.font.Font(None, 25)
+    started = pygame.time.get_ticks()
+    duration = 6800
+    services = ["A iniciar interface", "A verificar serviços", "A preparar o ambiente"]
+
+    while True:
+        now = pygame.time.get_ticks()
+        elapsed = now - started
+        progress = min(1.0, elapsed / duration)
+        phase = elapsed / duration
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return False
+
+        screen.fill((3, 5, 8))
+        cx, cy = width // 2, height // 2 - 35
+
+        # Reflexo verde que atravessa o ecrã no início.
+        if phase < 0.43:
+            sweep = (phase / 0.43) * (width + 500) - 250
+            glow = pygame.Surface((width, height), pygame.SRCALPHA)
+            for offset in range(-150, 151, 5):
+                alpha = max(0, 34 - abs(offset) // 5)
+                pygame.draw.line(glow, (25, 220, 125, alpha),
+                                 (int(sweep + offset), 0),
+                                 (int(sweep + offset - 210), height), 2)
+            screen.blit(glow, (0, 0))
+            pulse = 0.5 + 0.5 * __import__("math").sin(elapsed / 260)
+            pygame.draw.circle(screen, (12, int(65 + 55 * pulse), 55),
+                               (width // 2, cy), int(100 + 25 * pulse), 2)
+
+        # Marca central e feixe de luz.
+        logo_color = (235, 245, 240) if phase < 0.58 else (255, 255, 255)
+        logo = title_font.render("PiFOOTBALL", True, logo_color)
+        os_mark = title_font.render("OS", True, (255, 126, 35))
+        total_w = logo.get_width() + os_mark.get_width() + 12
+        x = (width - total_w) // 2
+        logo_rect = logo.get_rect(topleft=(x, cy - 55))
+        screen.blit(logo, logo_rect)
+        screen.blit(os_mark, (x + logo.get_width() + 12, cy - 55))
+
+        if 0.18 < phase < 0.66:
+            sweep_p = (phase - 0.18) / 0.48
+            beam_x = x - 80 + int(sweep_p * (total_w + 160))
+            beam = pygame.Surface((width, height), pygame.SRCALPHA)
+            pygame.draw.line(beam, (255, 255, 255, 150),
+                             (beam_x, cy - 75), (beam_x - 90, cy + 30), 5)
+            pygame.draw.line(beam, (80, 255, 170, 70),
+                             (beam_x + 8, cy - 75), (beam_x - 82, cy + 30), 15)
+            screen.blit(beam, (0, 0))
+
+        sub = subtitle_font.render("O TEU CENTRO DE ENTRETENIMENTO", True, (155, 165, 170))
+        screen.blit(sub, sub.get_rect(center=(width // 2, cy + 65)))
+
+        if phase >= 0.55:
+            idx = min(len(services) - 1, int((phase - 0.55) / 0.45 * len(services)))
+            status = status_font.render(services[idx] + "...", True,
+                                        (255, 145, 65) if phase > 0.78 else (85, 210, 145))
+            screen.blit(status, status.get_rect(center=(width // 2, cy + 135)))
+            bar_w = min(420, width - 80)
+            bar = pygame.Rect((width - bar_w) // 2, cy + 170, bar_w, 8)
+            pygame.draw.rect(screen, (35, 42, 45), bar, border_radius=4)
+            fill = bar.copy()
+            fill.width = int(bar_w * max(0, min(1, (phase - 0.55) / 0.45)))
+            if fill.width:
+                pygame.draw.rect(screen, (255, 126, 35), fill, border_radius=4)
+
+        # A luz verde transforma-se gradualmente no brilho laranja do HOME.
+        if phase > 0.82:
+            fade = min(1.0, (phase - 0.82) / 0.18)
+            tint = pygame.Surface((width, height), pygame.SRCALPHA)
+            pygame.draw.rect(tint, (255, 105, 25, int(34 * fade)), (0, 0, width, height))
+            screen.blit(tint, (0, 0))
+
+        pygame.display.flip()
+        if elapsed >= duration:
+            return True
+        clock.tick(30)
+
+
 def main():
     pygame.init()
     pygame.display.set_caption("PiFootball OS")
@@ -65,7 +150,7 @@ def main():
     config = load_iptv()
     password = ""
     message = "Bem-vindo ao PiFootball OS"
-    running = True
+    running = draw_boot_animation(screen, clock)
 
     while running:
         width, height = screen.get_size()
