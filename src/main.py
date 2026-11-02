@@ -15,6 +15,7 @@ BG=(12,14,18); PANEL=(24,27,33); ORANGE=(255,119,32)
 WHITE=(242,244,247); MUTED=(153,160,170); GREEN=(75,190,125)
 CONFIG_DIR = Path.home() / ".config" / "pifootball"
 IPTV_FILE = CONFIG_DIR / "iptv.json"
+PROFILES_FILE = CONFIG_DIR / "profiles.json"
 
 ITEMS = [
     ("FUTEBOL", "Jogos, resultados e competições"),
@@ -48,6 +49,27 @@ def save_iptv(data):
     IPTV_FILE.write_text(json.dumps(safe, ensure_ascii=False, indent=2), encoding="utf-8")
     try:
         os.chmod(IPTV_FILE, 0o600)
+    except OSError:
+        pass
+
+def load_profiles():
+    try:
+        data = json.loads(PROFILES_FILE.read_text(encoding="utf-8"))
+        names = data.get("profiles", [])
+        active = data.get("active", "")
+        names = [str(n).strip() for n in names if str(n).strip()]
+        if names:
+            return names, active if active in names else names[0]
+    except (OSError, ValueError, TypeError):
+        pass
+    return ["Utilizador"], "Utilizador"
+
+def save_profiles(names, active):
+    CONFIG_DIR.mkdir(parents=True, exist_ok=True)
+    data = {"profiles": names, "active": active}
+    PROFILES_FILE.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    try:
+        os.chmod(PROFILES_FILE, 0o600)
     except OSError:
         pass
 
@@ -171,6 +193,8 @@ def main():
     selected = 0
     page = "home"
     field_index = 0
+    profiles, active_profile = load_profiles()
+    new_profile_name = ""
     config = load_iptv()
     password = ""
     message = "Bem-vindo ao PiFootball OS"
@@ -197,8 +221,31 @@ def main():
                         if ITEMS[selected][0] == "IPTV":
                             page = "iptv"
                             field_index = 0
+                        elif ITEMS[selected][0] == "DEFINIÇÕES":
+                            page = "users"
                         else:
                             message = ITEMS[selected][0] + " — módulo em desenvolvimento"
+                elif page == "users":
+                    if event.key == pygame.K_ESCAPE:
+                        page = "home"
+                    elif event.key == pygame.K_BACKSPACE:
+                        new_profile_name = new_profile_name[:-1]
+                    elif event.key in (pygame.K_RETURN, pygame.K_KP_ENTER):
+                        candidate = new_profile_name.strip()
+                        if candidate:
+                            existing = next((n for n in profiles if n.casefold() == candidate.casefold()), None)
+                            if existing:
+                                active_profile = existing
+                            else:
+                                profiles.append(candidate)
+                                active_profile = candidate
+                            save_profiles(profiles, active_profile)
+                            message = "Utilizador ativo: " + active_profile
+                            new_profile_name = ""
+                        else:
+                            message = "Escreve um nome primeiro."
+                    elif event.unicode and event.unicode.isprintable() and len(new_profile_name) < 24:
+                        new_profile_name += event.unicode
                 elif page == "iptv":
                     if event.key == pygame.K_ESCAPE:
                         page = "home"
@@ -248,9 +295,22 @@ def main():
                     pygame.draw.rect(screen, ORANGE, rect, width=4, border_radius=10)
                 screen.blit(med.render(name, True, ORANGE if i == selected else WHITE), (x + 14, y + 20))
                 screen.blit(small.render(desc, True, MUTED), (x + 14, y + 62))
+        elif page == "users":
+            screen.blit(big.render("UTILIZADORES", True, WHITE), (42, 145))
+            screen.blit(small.render("Perfil ativo: " + active_profile, True, GREEN), (46, 210))
+            screen.blit(med.render("Perfis guardados", True, WHITE), (46, 260))
+            for i, name in enumerate(profiles[:10]):
+                color = ORANGE if name == active_profile else MUTED
+                screen.blit(med.render(name, True, color), (60, 305 + i * 36))
+            box = pygame.Rect(620, 260, min(560, width - 660), 72)
+            pygame.draw.rect(screen, PANEL, box, border_radius=8)
+            pygame.draw.rect(screen, ORANGE, box, 2, border_radius=8)
+            screen.blit(small.render("Criar ou selecionar perfil", True, MUTED), (box.x + 14, box.y + 8))
+            screen.blit(med.render(new_profile_name or "Escreve um nome...", True, WHITE), (box.x + 14, box.y + 36))
+            screen.blit(small.render("ENTER: criar/selecionar   BACKSPACE: apagar   ESC: voltar", True, MUTED), (44, height - 62))
+            screen.blit(small.render("Os perfis são guardados localmente neste Raspberry Pi.", True, GREEN), (44, height - 34))
         else:
-            screen.blit(big.render("CONFIGURAR IPTV", True, WHITE), (42, 145))
-            screen.blit(small.render("Introduz os dados fornecidos pelo teu serviço IPTV autorizado.", True, MUTED), (44, 205))
+            screen.blit(big.render("CONFIGURAR IPTV", True, WHITE), (42, 145))            screen.blit(small.render("Introduz os dados fornecidos pelo teu serviço IPTV autorizado.", True, MUTED), (44, 205))
             for i, (label, key) in enumerate(FIELDS):
                 y = 250 + i * 72
                 active = i == field_index
