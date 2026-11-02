@@ -423,6 +423,7 @@ def main():
             screen.blit(big.render("LOJA DE APLICAÇÕES", True, WHITE), (42, 112))
             screen.blit(small.render("REDES, ENTRETENIMENTO E PROGRAMAS LINUX", True, MUTED), (46, 166))
             store_apps = [
+                ("PiTube", "pitube", "apps/pitube/index.html"),
                 ("YouTube", "web", "https://www.youtube.com"),
                 ("WhatsApp", "web", "https://web.whatsapp.com"),
                 ("Instagram", "web", "https://www.instagram.com"),
@@ -438,7 +439,9 @@ def main():
                 pygame.draw.rect(screen, PANEL, rect, border_radius=9)
                 if i == store_selected and pending_install is None:
                     pygame.draw.rect(screen, ORANGE, rect, width=3, border_radius=9)
-                if kind == "youtube":
+                if kind == "pitube":
+                    status, status_color = "INTERFACE TV", GREEN
+                elif kind == "youtube":
                     status, status_color = "APP WEB", GREEN
                 elif kind == "web":
                     status, status_color = "VERSÃO WEB", GREEN
