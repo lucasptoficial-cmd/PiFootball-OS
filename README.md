@@ -29,3 +29,12 @@ Os perfis e a preferência da animação são guardados localmente em `~/.config
 O ecrã IPTV permite preencher e guardar host/IP, porta, utilizador e URL M3U de um fornecedor autorizado; ainda não estabelece ligação nem reproduz canais. A palavra-passe permanece apenas na memória da sessão e não é guardada.
 
 A imagem `.img` será preparada depois de a base ser testada num Raspberry Pi 2 real.
+
+
+## Browser e loja de aplicações (protótipo)
+
+- O menu INTERNET abre um campo de endereço e tenta lançar o NetSurf, se estiver instalado.
+- A secção APLICAÇÕES inclui a loja com NetSurf, VLC e Audacious como pacotes sugeridos.
+- A instalação exige confirmação no ecrã e abre um terminal gráfico com `sudo apt-get` (ou usa `pkexec` se existir).
+- São aplicações Linux dos repositórios configurados no Raspberry Pi OS, não APKs Android. A disponibilidade dos pacotes depende da versão e arquitetura do sistema.
+- O browser é uma janela externa; ainda não está integrado dentro do PiFootball OS. A compatibilidade e desempenho têm de ser testados no Raspberry Pi 2.
