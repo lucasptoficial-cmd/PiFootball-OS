@@ -252,7 +252,7 @@ def main():
         for event in pygame.event.get():
             if gamepads is not None and event.type in (
                 pygame.JOYDEVICEADDED, pygame.JOYDEVICEREMOVED,
-                pygame.JOYBUTTONDOWN, pygame.JOYHATmotion if hasattr(pygame, "JOYHATmotion") else -1,
+                pygame.JOYBUTTONDOWN, pygame.JOYHATMOTION,
                 pygame.JOYAXISMOTION
             ):
                 gamepads.handle_event(event)
