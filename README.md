@@ -61,3 +61,12 @@ A loja apresenta Roblox como experimental e faz uma verificação local da arqui
 ### PiTube — interface YouTube para televisão
 
 Foi adicionada `apps/pitube/index.html`, uma interface TV própria com navegação para Início, Explorar, Shorts, Subscrições, Biblioteca, pesquisa e canais. A pesquisa e a reprodução são encaminhadas para páginas oficiais do YouTube; a interface não extrai streams nem substitui o leitor oficial. O PiTube precisa de um browser compatível (preferencialmente Chromium). A compatibilidade e o desempenho no Raspberry Pi 2 ainda não foram testados em hardware.
+
+## PiCraft e PiModCraft (primeira versão)
+
+A Loja de aplicações inclui agora duas aplicações locais:
+
+- **PiCraft** (`apps/picraft/index.html`): gestor auxiliar de perfis, configuração de versão/loader, pré-visualização de skins PNG e atalhos para ferramentas/modpacks. Ainda não substitui um launcher oficial nem inicia o jogo por si só.
+- **PiModCraft** (`apps/pimodcraft/index.html`): pesquisa mods no catálogo público Modrinth, filtra por loader e versão e permite descarregar ficheiros publicados. A instalação automática numa instância ainda não está implementada; é necessário colocar o `.jar` na pasta `mods` e instalar dependências.
+
+As duas aplicações abrem pelo menu APLICAÇÕES → Loja de aplicações, usando o navegador disponível. A pesquisa Modrinth necessita de Internet e de um navegador com suporte a JavaScript moderno. A compatibilidade com Raspberry Pi 2/ARMv7 não está garantida; Minecraft moderno e modpacks podem exceder os recursos do equipamento.
