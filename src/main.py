@@ -220,11 +220,25 @@ def main():
     goal_alert_started = None
     running = draw_boot_animation(screen, clock) if settings["boot_animation"] else True
 
+    cec_home_event = pygame.event.custom_type()
+    cec_status = "CEC não iniciado"
+    try:
+        from cec_remote import SamsungRemote
+        remote = SamsungRemote(pygame, home_event_type=cec_home_event)
+        remote.start()
+        cec_status = "Comando Samsung: à procura de HDMI-CEC"
+    except Exception as exc:
+        remote = None
+        cec_status = "Comando CEC indisponível: " + str(exc)
+
     while running:
         width, height = screen.get_size()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            elif event.type == cec_home_event:
+                page = "home"
+                message = "HOME aberto pelo comando Samsung"
             elif event.type == pygame.KEYDOWN:
                 if page == "home":
                     if event.key in (pygame.K_ESCAPE, pygame.K_q):
@@ -257,23 +271,9 @@ def main():
                             message = "Animação de arranque " + ("ativada" if settings["boot_animation"] else "desativada")
                         else:
                             page = "users"
-                elif page == "settings":
-            screen.blit(big.render("DEFINIÇÕES", True, WHITE), (42, 145))
-            screen.blit(small.render("Configuração geral do PiFootball OS", True, MUTED), (46, 205))
-            options = [("Animação de arranque", "ATIVADA" if settings["boot_animation"] else "DESATIVADA"), ("Gerir utilizadores", "ABRIR")]
-            for i, (label, value) in enumerate(options):
-                y = 270 + i * 100
-                rect = pygame.Rect(44, y, min(width - 88, 900), 76)
-                pygame.draw.rect(screen, PANEL, rect, border_radius=9)
-                if i == settings_index:
-                    pygame.draw.rect(screen, ORANGE, rect, width=3, border_radius=9)
-                screen.blit(med.render(label, True, WHITE), (rect.x + 18, rect.y + 20))
-                val = small.render(value, True, GREEN if i == 0 else ORANGE)
-                screen.blit(val, (rect.right - val.get_width() - 20, rect.y + 27))
-            screen.blit(small.render("CIMA/BAIXO: escolher   ENTER: alterar/abrir   ESC: voltar", True, MUTED), (44, height - 55))
-        elif page == "users":
+                elif page == "users":
                     if event.key == pygame.K_ESCAPE:
-                        page = "home"
+                        page = "settings"
                     elif event.key in (pygame.K_UP, pygame.K_DOWN):
                         if profiles:
                             current = profiles.index(active_profile) if active_profile in profiles else 0
@@ -289,10 +289,6 @@ def main():
                             message = "Perfil removido. Ativo: " + active_profile
                         else:
                             message = "Mantém pelo menos um perfil."
-                    elif event.key == pygame.K_F5:
-                        settings["boot_animation"] = not settings["boot_animation"]
-                        save_settings(settings)
-                        message = "Animação de arranque " + ("ativada" if settings["boot_animation"] else "desativada")
                     elif event.key == pygame.K_BACKSPACE:
                         new_profile_name = new_profile_name[:-1]
                     elif event.key in (pygame.K_RETURN, pygame.K_KP_ENTER):
@@ -339,7 +335,6 @@ def main():
                             password += event.unicode
                         else:
                             config[key] = config.get(key, "") + event.unicode
-
         screen.fill(BG)
         pygame.draw.rect(screen, PANEL, (0, 0, width, 108))
         screen.blit(big.render("PiFOOTBALL", True, WHITE), (38, 24))
@@ -374,7 +369,7 @@ def main():
             screen.blit(small.render("Criar ou selecionar perfil", True, MUTED), (box.x + 14, box.y + 8))
             screen.blit(med.render(new_profile_name or "Escreve um nome...", True, WHITE), (box.x + 14, box.y + 36))
             screen.blit(small.render("Cima/baixo: trocar perfil   ENTER: criar/selecionar   F2: apagar perfil", True, MUTED), (44, height - 92))
-            screen.blit(small.render("F5: animação de arranque " + ("ATIVADA" if settings["boot_animation"] else "DESATIVADA") + "   ESC: voltar", True, MUTED), (44, height - 62))
+            screen.blit(small.render("OK: criar/selecionar   BACK: voltar   F2: apagar perfil", True, MUTED), (44, height - 62))
             screen.blit(small.render("Os perfis são guardados localmente neste Raspberry Pi.", True, GREEN), (44, height - 34))
         else:
             screen.blit(big.render("CONFIGURAR IPTV", True, WHITE), (42, 145))
@@ -406,12 +401,12 @@ def main():
         pygame.draw.rect(screen, PANEL, (0, height - 48, width, 48))
         screen.blit(small.render(message, True, WHITE), (20, height - 31))
         if page == "home":
-            hint = small.render("Setas: navegar   ENTER: abrir   ESC: sair", True, MUTED)
+            hint = small.render("Comando Samsung: setas navegar · OK selecionar · BACK voltar · OK 5s: HOME", True, MUTED)
             screen.blit(hint, (width - hint.get_width() - 20, height - 31))
         pygame.display.flip()
         clock.tick(30)
 
-    pygame.quit()
+    if remote is not None:\n        remote.stop()\n    pygame.quit()
 
 if __name__ == "__main__":
     main()
