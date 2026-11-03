@@ -631,13 +631,31 @@ def main():
                 goal_alert_started = None
 
         pygame.draw.rect(screen, PANEL, (0, height - 48, width, 48))
-        screen.blit(small.render(message, True, WHITE), (20, height - 31))
+        if page == "home":
+            footer_text = ITEMS[selected][0] + " — " + ITEMS[selected][1]
+        elif page == "tv":
+            footer_text = "TV & IPTV — ENTER para abrir · ESC para voltar"
+        elif page == "browser":
+            footer_text = "INTERNET — escreve um endereço e carrega ENTER"
+        elif page == "apps":
+            footer_text = "APLICAÇÕES — escolhe Navegador ou Loja"
+        elif page == "store":
+            footer_text = "LOJA — ENTER para abrir · ESC para voltar"
+        elif page == "settings":
+            footer_text = "DEFINIÇÕES — ENTER para alterar · ESC para voltar"
+        elif page == "users":
+            footer_text = "UTILIZADORES — ENTER para guardar · F2 para apagar"
+        elif page == "iptv":
+            footer_text = "IPTV — configura os dados do teu serviço autorizado"
+        else:
+            footer_text = message
+        # Mensagens de operação continuam visíveis fora do ecrã inicial.
+        if page != "home" and message and message != "Bem-vindo ao PiFootball OS":
+            footer_text = message
+        footer_surface = small.render(footer_text, True, WHITE)
+        screen.blit(footer_surface, (20, height - 31))
         pygame.display.flip()
         clock.tick(30)
-
-    if remote is not None:
-        remote.stop()
-    pygame.quit()
 
     if remote is not None:
         remote.stop()
