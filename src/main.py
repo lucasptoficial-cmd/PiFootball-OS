@@ -398,16 +398,16 @@ def main():
                         else:
                             message = "O guia de canais ainda está em desenvolvimento."
                 elif page == "browser":
-            screen.blit(big.render("NAVEGADOR", True, WHITE), (42, 145))
-            screen.blit(small.render("Endereço Web — o navegador abre numa janela própria", True, MUTED), (46, 205))
-            rect = pygame.Rect(44, 270, min(width - 88, 1080), 76)
-            pygame.draw.rect(screen, PANEL, rect, border_radius=9)
-            pygame.draw.rect(screen, ORANGE, rect, width=3, border_radius=9)
-            screen.blit(med.render(browser_url[-75:] or "Escreve um endereço...", True, WHITE), (rect.x + 18, rect.y + 22))
-            installed = bool(shutil.which("netsurf-gtk") or shutil.which("netsurf"))
-            state = "NetSurf instalado" if installed else "NetSurf não instalado — usa a Loja de aplicações"
-            screen.blit(small.render(state, True, GREEN if installed else ORANGE), (46, 375))
-            screen.blit(small.render("Escreve o endereço · ENTER: abrir · BACKSPACE: apagar · BACK: voltar", True, MUTED), (44, height - 55))
+                screen.blit(big.render("NAVEGADOR", True, WHITE), (42, 145))
+                screen.blit(small.render("Endereço Web — o navegador abre numa janela própria", True, MUTED), (46, 205))
+                rect = pygame.Rect(44, 270, min(width - 88, 1080), 76)
+                pygame.draw.rect(screen, PANEL, rect, border_radius=9)
+                pygame.draw.rect(screen, ORANGE, rect, width=3, border_radius=9)
+                screen.blit(med.render(browser_url[-75:] or "Escreve um endereço...", True, WHITE), (rect.x + 18, rect.y + 22))
+                installed = bool(shutil.which("netsurf-gtk") or shutil.which("netsurf"))
+                state = "NetSurf instalado" if installed else "NetSurf não instalado — usa a Loja de aplicações"
+                screen.blit(small.render(state, True, GREEN if installed else ORANGE), (46, 375))
+                screen.blit(small.render("Escreve o endereço · ENTER: abrir · BACKSPACE: apagar · BACK: voltar", True, MUTED), (44, height - 55))
         elif page == "apps":
             screen.blit(big.render("APLICAÇÕES", True, WHITE), (42, 145))
             screen.blit(small.render("Aplicações compatíveis com Raspberry Pi OS", True, MUTED), (46, 205))
