@@ -3,6 +3,7 @@ import json, os
 from pathlib import Path
 from ursina import *
 from ursina.prefabs.first_person_controller import FirstPersonController
+from ursina.prefabs.input_field import InputField
 
 try:
     import pygame
@@ -168,7 +169,7 @@ def update():
         if abs(ry) > .16: player.position += player.forward * -ry * time.dt * 5
         player.rotation_y += lx * time.dt * 110
         player.camera_pivot.rotation_x = clamp(player.camera_pivot.rotation_x - ly * time.dt * 90, -80, 80)
-        edge("A", lambda: setattr(player, "jump", True))
+        edge("A", player.jump)
         edge("Y", toggle_inventory)
         edge("L1", lambda: cycle(-1))
         edge("R1", lambda: cycle(1))
