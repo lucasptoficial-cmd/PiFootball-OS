@@ -1,0 +1,7 @@
+{
+  "max_players_per_map": 7,
+  "minimum_players_per_map": 1,
+  "includes_host": true,
+  "overflow_policy": "reject_join",
+  "scope": "per_map"
+}
