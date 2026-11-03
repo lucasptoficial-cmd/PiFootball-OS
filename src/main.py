@@ -397,75 +397,7 @@ def main():
                             field_index = 0
                         else:
                             message = "O guia de canais ainda está em desenvolvimento."
-        elif page == "browser":
-            screen.blit(big.render("NAVEGADOR", True, WHITE), (42, 145))
-            screen.blit(small.render("Endereço Web — o navegador abre numa janela própria", True, MUTED), (46, 205))
-            rect = pygame.Rect(44, 270, min(width - 88, 1080), 76)
-            pygame.draw.rect(screen, PANEL, rect, border_radius=9)
-            pygame.draw.rect(screen, ORANGE, rect, width=3, border_radius=9)
-            screen.blit(med.render(browser_url[-75:] or "Escreve um endereço...", True, WHITE), (rect.x + 18, rect.y + 22))
-            installed = bool(shutil.which("netsurf-gtk") or shutil.which("netsurf"))
-            state = "NetSurf instalado" if installed else "NetSurf não instalado — usa a Loja de aplicações"
-            screen.blit(small.render(state, True, GREEN if installed else ORANGE), (46, 375))
-            screen.blit(small.render("Escreve o endereço · ENTER: abrir · BACKSPACE: apagar · BACK: voltar", True, MUTED), (44, height - 55))
-        elif page == "apps":
-            screen.blit(big.render("APLICAÇÕES", True, WHITE), (42, 145))
-            screen.blit(small.render("Aplicações compatíveis com Raspberry Pi OS", True, MUTED), (46, 205))
-            options = [("Navegador", "Abrir um endereço Web"), ("Loja de aplicações", "Instalar programas compatíveis"), ("Mais aplicações", "Em desenvolvimento")]
-            for i, (label, desc) in enumerate(options):
-                y = 260 + i * 105
-                rect = pygame.Rect(44, y, min(width - 88, 900), 82)
-                pygame.draw.rect(screen, PANEL, rect, border_radius=9)
-                if i == app_selected:
-                    pygame.draw.rect(screen, ORANGE, rect, width=3, border_radius=9)
-                screen.blit(med.render(label, True, WHITE), (rect.x + 18, rect.y + 12))
-                screen.blit(small.render(desc, True, MUTED), (rect.x + 18, rect.y + 49))
-            screen.blit(small.render("Setas: escolher   OK: abrir   BACK: voltar", True, MUTED), (44, height - 55))
-        elif page == "store":
-            screen.blit(big.render("LOJA DE APLICAÇÕES", True, WHITE), (42, 112))
-            screen.blit(small.render("REDES, ENTRETENIMENTO E PROGRAMAS LINUX", True, MUTED), (46, 166))
-            store_apps = [
-                ("PiCraft — Minecraft", "picraft", "apps/picraft/index.html"),
-                ("PiModCraft — Mods", "pimodcraft", "apps/pimodcraft/index.html"),
-                ("PiTube", "pitube", "apps/pitube/index.html"),
-                ("YouTube", "web", "https://www.youtube.com"),
-                ("WhatsApp", "web", "https://web.whatsapp.com"),
-                ("Instagram", "web", "https://www.instagram.com"),
-                ("Discord", "web", "https://discord.com/app"),
-                ("Roblox", "info", "Roblox não tem cliente oficial para Linux."),
-                ("Navegador NetSurf", "pkg", "netsurf-gtk"),
-                ("Leitor multimédia VLC", "pkg", "vlc"),
-                ("Leitor de música Audacious", "pkg", "audacious"),
-            ]
-            for i, (label, kind, target) in enumerate(store_apps):
-                col, row = i % 2, i // 2
-                rect = pygame.Rect(44 + col * 510, 190 + row * 82, min(480, (width - 110) // 2), 82)
-                pygame.draw.rect(screen, PANEL, rect, border_radius=9)
-                if i == store_selected and pending_install is None:
-                    pygame.draw.rect(screen, ORANGE, rect, width=3, border_radius=9)
-                if kind in ("picraft", "pimodcraft"):
-                    status, status_color = "APP LOCAL", GREEN
-                elif kind == "pitube":
-                    status, status_color = "INTERFACE TV", GREEN
-                elif kind == "youtube":
-                    status, status_color = "APP WEB", GREEN
-                elif kind == "web":
-                    status, status_color = "VERSÃO WEB", GREEN
-                elif kind == "roblox":
-                    status, status_color = "EXPERIMENTAL / INCOMPATÍVEL", ORANGE
-                elif kind == "info":
-                    status, status_color = "INFORMAÇÃO", MUTED
-                else:
-                    binary = {"netsurf-gtk":"netsurf-gtk","vlc":"vlc","audacious":"audacious"}[target]
-                    status = "INSTALADO" if shutil.which(binary) else "PACOTE LINUX"
-                    status_color = GREEN if status == "INSTALADO" else MUTED
-                screen.blit(med.render(label, True, WHITE), (rect.x + 16, rect.y + 12))
-                screen.blit(small.render(status, True, status_color), (rect.x + 16, rect.y + 48))
-            if pending_install:
-                screen.blit(small.render("Confirmas instalar " + pending_install + "? OK confirma · N cancela", True, ORANGE), (44, height - 92))
-            else:
-                screen.blit(small.render("Setas: navegar · OK: abrir/selecionar · BACK: voltar", True, MUTED), (44, height - 55))
-        elif page == "settings":
+                elif page == "settings":
                     if event.key == pygame.K_ESCAPE:
                         page = "home"
                     elif event.key in (pygame.K_UP, pygame.K_DOWN):
@@ -562,6 +494,73 @@ def main():
                     pygame.draw.rect(screen, ORANGE, rect, width=4, border_radius=10)
                 screen.blit(med.render(name, True, ORANGE if i == selected else WHITE), (x + 18, y + 28))
                 screen.blit(small.render(desc, True, MUTED), (x + 18, y + 78))
+        elif page == "browser":
+            screen.blit(big.render("NAVEGADOR", True, WHITE), (42, 145))
+            screen.blit(small.render("Endereço Web — o navegador abre numa janela própria", True, MUTED), (46, 205))
+            rect = pygame.Rect(44, 270, min(width - 88, 1080), 76)
+            pygame.draw.rect(screen, PANEL, rect, border_radius=9)
+            pygame.draw.rect(screen, ORANGE, rect, width=3, border_radius=9)
+            screen.blit(med.render(browser_url[-75:] or "Escreve um endereço...", True, WHITE), (rect.x + 18, rect.y + 22))
+            installed = bool(shutil.which("netsurf-gtk") or shutil.which("netsurf"))
+            state = "NetSurf instalado" if installed else "NetSurf não instalado — usa a Loja de aplicações"
+            screen.blit(small.render(state, True, GREEN if installed else ORANGE), (46, 375))
+            screen.blit(small.render("Escreve o endereço · ENTER: abrir · BACKSPACE: apagar · BACK: voltar", True, MUTED), (44, height - 55))
+        elif page == "apps":
+            screen.blit(big.render("APLICAÇÕES", True, WHITE), (42, 145))
+            screen.blit(small.render("Aplicações compatíveis com Raspberry Pi OS", True, MUTED), (46, 205))
+            options = [("Navegador", "Abrir um endereço Web"), ("Loja de aplicações", "Instalar programas compatíveis"), ("Mais aplicações", "Em desenvolvimento")]
+            for i, (label, desc) in enumerate(options):
+                y = 260 + i * 105
+                rect = pygame.Rect(44, y, min(width - 88, 900), 82)
+                pygame.draw.rect(screen, PANEL, rect, border_radius=9)
+                if i == app_selected:
+                    pygame.draw.rect(screen, ORANGE, rect, width=3, border_radius=9)
+                screen.blit(med.render(label, True, WHITE), (rect.x + 18, rect.y + 12))
+                screen.blit(small.render(desc, True, MUTED), (rect.x + 18, rect.y + 49))
+            screen.blit(small.render("Setas: escolher   OK: abrir   BACK: voltar", True, MUTED), (44, height - 55))
+        elif page == "store":
+            screen.blit(big.render("LOJA DE APLICAÇÕES", True, WHITE), (42, 112))
+            screen.blit(small.render("REDES, ENTRETENIMENTO E PROGRAMAS LINUX", True, MUTED), (46, 166))
+            store_apps = [
+                ("PiCraft — Minecraft", "picraft", "apps/picraft/index.html"),
+                ("PiModCraft — Mods", "pimodcraft", "apps/pimodcraft/index.html"),
+                ("PiTube", "pitube", "apps/pitube/index.html"),
+                ("YouTube", "web", "https://www.youtube.com"),
+                ("WhatsApp", "web", "https://web.whatsapp.com"),
+                ("Instagram", "web", "https://www.instagram.com"),
+                ("Discord", "web", "https://discord.com/app"),
+                ("Roblox", "info", "Roblox não tem cliente oficial para Linux."),
+                ("Navegador NetSurf", "pkg", "netsurf-gtk"),
+                ("Leitor multimédia VLC", "pkg", "vlc"),
+                ("Leitor de música Audacious", "pkg", "audacious"),
+            ]
+            for i, (label, kind, target) in enumerate(store_apps):
+                col, row = i % 2, i // 2
+                rect = pygame.Rect(44 + col * 510, 190 + row * 82, min(480, (width - 110) // 2), 82)
+                pygame.draw.rect(screen, PANEL, rect, border_radius=9)
+                if i == store_selected and pending_install is None:
+                    pygame.draw.rect(screen, ORANGE, rect, width=3, border_radius=9)
+                if kind in ("picraft", "pimodcraft"):
+                    status, status_color = "APP LOCAL", GREEN
+                elif kind == "pitube":
+                    status, status_color = "INTERFACE TV", GREEN
+                elif kind == "youtube":
+                    status, status_color = "APP WEB", GREEN
+                elif kind == "web":
+                    status, status_color = "VERSÃO WEB", GREEN
+                elif kind == "roblox":
+                    status, status_color = "EXPERIMENTAL / INCOMPATÍVEL", ORANGE
+                elif kind == "info":
+                    status, status_color = "INFORMAÇÃO", MUTED
+                else:
+                    status = "INSTALADO" if shutil.which(target) else "PACOTE LINUX"
+                    status_color = GREEN if status == "INSTALADO" else MUTED
+                screen.blit(med.render(label, True, WHITE), (rect.x + 16, rect.y + 12))
+                screen.blit(small.render(status, True, status_color), (rect.x + 16, rect.y + 48))
+            if pending_install:
+                screen.blit(small.render("Confirmas instalar " + pending_install + "? OK confirma · N cancela", True, ORANGE), (44, height - 92))
+            else:
+                screen.blit(small.render("Setas: navegar · OK: abrir/selecionar · BACK: voltar", True, MUTED), (44, height - 55))
         elif page == "settings":
             screen.blit(big.render("DEFINIÇÕES", True, WHITE), (42, 145))
             screen.blit(small.render("Configuração geral do PiFootball OS", True, MUTED), (46, 205))
@@ -635,6 +634,10 @@ def main():
         screen.blit(small.render(message, True, WHITE), (20, height - 31))
         pygame.display.flip()
         clock.tick(30)
+
+    if remote is not None:
+        remote.stop()
+    pygame.quit()
 
     if remote is not None:
         remote.stop()
