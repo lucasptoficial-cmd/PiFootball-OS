@@ -93,3 +93,14 @@ Abrir PiCraft e escolher **Jogar PiCraft**. Esta é uma base inicial 2D isométr
 - O mundo guarda também o estado das criaturas no armazenamento local do navegador.
 - Continua a ser um protótipo isométrico 2D: não há ainda combate, drops, IA avançada ou bancada de crafting completa.
 - Alterações feitas apenas em `apps/picraft/game.html` e documentação. Não foi criada nem alterada qualquer release ou imagem `.img`.
+
+
+## Atualizações e recuperação de versão
+
+Ao iniciar com `bash scripts/run.sh`, o sistema procura atualizações no GitHub. Se existir uma versão mais recente, pergunta se queres atualizar; responder `s` instala-a e qualquer outra resposta mantém a versão atual.
+
+Para regressar à versão imediatamente anterior:
+```bash
+bash scripts/rollback.sh
+```
+O rollback também pede confirmação. O atualizador só faz atualizações diretas (fast-forward) e recusa atualizar ou reverter quando deteta alterações locais, para evitar apagá-las. A versão anterior fica guardada localmente em `.git`; é necessário ter instalado o sistema através de um clone Git e ter ligação à Internet para procurar atualizações. Não é um atualizador automático em segundo plano.
