@@ -126,3 +126,26 @@ A interface principal foi substituída pelo tema TV Laranja Neon, com canvas de 
 - páginas internas passam a usar o mesmo sistema visual.
 
 O desenho está em `src/visual_theme.py`; a lógica de navegação, perfis, IPTV, loja e HDMI-CEC continua em `src/main.py`. A interface precisa de validação visual e de controlos num Raspberry Pi 2/televisão reais antes de ser considerada final.
+
+## Controlos programados
+
+### Menu PiFootball OS (televisão/comando)
+- Setas: mover a seleção entre os oito cartões na mesma ordem da imagem.
+- OK/Enter: abrir o cartão selecionado.
+- Back/Escape: regressar à página anterior; no ecrã principal não fecha o sistema.
+- HOME HDMI-CEC: regressar diretamente ao menu principal.
+- CH+/CH−: reservado para mudar canais na área TV quando a lista de canais estiver ligada.
+- A barra inferior apresenta a legenda dos controlos.
+
+### PiCraft — comando PlayStation
+- Analógico esquerdo: mover o jogador.
+- Analógico direito: orientar o alvo/câmara.
+- L2: interagir/colocar bloco.
+- R2: partir bloco.
+- L1/R1: bloco anterior/seguinte na barra rápida.
+- L3: alternar agachar; R3: alternar correr.
+- Cruz: saltar; Quadrado: selecionar o bloco apontado; Triângulo: inventário.
+- D-pad para baixo: abrir/fechar o chat local; D-pad direita: alternar Survival, Criativo, Aventura e Espectador.
+- Options/Start: regressar ao menu PiCraft; Círculo: fechar o inventário.
+
+O chat desta versão é local ao dispositivo; não representa ainda mensagens em rede. Os controlos de gamepad são exclusivos do PiCraft.
