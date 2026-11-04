@@ -1,0 +1,35 @@
+{
+  "controller": "N’PLAY SKILL 8.1 / esquema PlayStation 4",
+  "mapping": {
+    "R2": "partir/quebrar blocos",
+    "L2": "interagir com blocos",
+    "R1": "item seguinte na barra rápida",
+    "L1": "item anterior na barra rápida",
+    "R3": "correr",
+    "L3": "Shift / agachar",
+    "joystick esquerdo": "mover o jogador",
+    "joystick direito": "mover a câmara",
+    "Y / Triângulo": "inventário",
+    "X / Quadrado": "selecionar",
+    "A / Cruz": "saltar",
+    "B / Círculo": "agachar (função do Círculo no Minecraft para PS4)",
+    "D-pad baixo": "chat",
+    "D-pad direita": "alternar modo de jogo",
+    "START / Options": "ESC",
+    "D-pad cima": "sem função",
+    "D-pad esquerda": "sem função"
+  },
+  "game_mode_cycle": [
+    "Criativo",
+    "Aventura",
+    "Espectador",
+    "Sobrevivência"
+  ],
+  "game_mode_cycle_repeats": true,
+  "notes": [
+    "Este ficheiro regista o esquema acordado para o comando.",
+    "O protótipo isométrico atual ainda não implementa todas estas ações.",
+    "Em particular, interação com blocos, câmara livre, salto, chat e modos de jogo precisam de integração no motor.",
+    "L3 e B/Círculo têm ambos a função de agachar/Shift, conforme o esquema pedido."
+  ]
+}
