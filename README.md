@@ -114,3 +114,15 @@ O rollback também pede confirmação. O atualizador só faz atualizações dire
 - Controlos documentados: teclado (WASD/setas, Espaço, Enter/clique, E, 1–6, Esc) e esquema de gamepad (D-pad/analógico, A/OK, X, Y, LB/RB, START).
 - Limite pretendido: 7 jogadores por mapa, incluindo o anfitrião.
 - **Limitação atual:** esta alteração cria a interface e guarda dados apenas no navegador. Não implementa ainda descoberta LAN, ligações entre dispositivos, convites reais, entrada durante a partida, sincronização de mundos ou chat em rede. O esquema de gamepad está documentado, mas ainda não está ligado ao motor do jogo.
+
+## Interface visual PiFootball OS — tema Laranja Neon
+
+A interface principal foi substituída pelo tema TV Laranja Neon, com canvas de desenho 1672×941 adaptado ao tamanho do ecrã:
+- estádio noturno e relvado como fundo;
+- cabeçalho PiFootball OS, bola com órbita e marca Raspberry Pi;
+- navegação horizontal em cartões com seleção laranja;
+- painel Aplicações com categorias à esquerda e aplicações à direita;
+- rodapé com guia de navegação do comando;
+- páginas internas passam a usar o mesmo sistema visual.
+
+O desenho está em `src/visual_theme.py`; a lógica de navegação, perfis, IPTV, loja e HDMI-CEC continua em `src/main.py`. A interface precisa de validação visual e de controlos num Raspberry Pi 2/televisão reais antes de ser considerada final.
