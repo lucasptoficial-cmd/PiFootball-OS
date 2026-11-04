@@ -22,15 +22,16 @@ IPTV_FILE = CONFIG_DIR / "iptv.json"
 PROFILES_FILE = CONFIG_DIR / "profiles.json"
 SETTINGS_FILE = CONFIG_DIR / "settings.json"
 
+# Ordem igual à barra horizontal da referência visual.
 ITEMS = [
     ("FUTEBOL", "Jogos, resultados e competições"),
     ("TV & IPTV", "Canais, guia e listas IPTV"),
     ("INTERNET", "Navegador e serviços online"),
+    ("DEFINIÇÕES", "Perfis, rede e sistema"),
     ("FILMES E SÉRIES", "Biblioteca multimédia"),
     ("APLICAÇÕES", "As tuas aplicações"),
     ("MÚSICA", "Música e rádio"),
     ("NOTÍCIAS", "Notícias desportivas"),
-    ("DEFINIÇÕES", "Perfis, rede e sistema"),
 ]
 FIELDS = [
     ("Host / IP", "host"),
@@ -251,9 +252,7 @@ def main():
                 message = "HOME aberto pelo comando Samsung"
             elif event.type == pygame.KEYDOWN:
                 if page == "home":
-                    if event.key in (pygame.K_ESCAPE, pygame.K_q):
-                        running = False
-                    elif event.key == pygame.K_F9:
+                    if event.key == pygame.K_F9:
                         goal_alert_started = pygame.time.get_ticks()
                         message = "Demonstração de alerta de golo"
                     elif event.key in (pygame.K_RIGHT, pygame.K_DOWN):
@@ -261,21 +260,33 @@ def main():
                     elif event.key in (pygame.K_LEFT, pygame.K_UP):
                         selected = (selected - 1) % len(ITEMS)
                     elif event.key in (pygame.K_RETURN, pygame.K_KP_ENTER):
-                        if ITEMS[selected][0] == "TV & IPTV":
-                            page = "tv"
-                            tv_selected = 0
-                        elif ITEMS[selected][0] == "DEFINIÇÕES":
-                            page = "settings"
-                            settings_index = 0
-                        elif ITEMS[selected][0] == "INTERNET":
+                        chosen = ITEMS[selected][0]
+                        if chosen == "TV & IPTV":
+                            page, tv_selected = "tv", 0
+                        elif chosen == "DEFINIÇÕES":
+                            page, settings_index = "settings", 0
+                        elif chosen == "INTERNET":
                             page = "browser"
-                        elif ITEMS[selected][0] == "APLICAÇÕES":
-                            page = "apps"
-                            app_selected = 0
-                        else:
-                            message = ITEMS[selected][0] + " — módulo em desenvolvimento"
+                        elif chosen == "APLICAÇÕES":
+                            page, app_selected = "apps", 0
+                        elif chosen == "FUTEBOL":
+                            page = "football"
+                        elif chosen == "FILMES E SÉRIES":
+                            page = "movies"
+                        elif chosen == "MÚSICA":
+                            page = "music"
+                        elif chosen == "NOTÍCIAS":
+                            page = "news"
+                        message = ""
+                    elif event.key in (pygame.K_ESCAPE, pygame.K_BACKSPACE):
+                        message = "Estás no menu principal."
+                elif page in ("football", "movies", "music", "news"):
+                    if event.key in (pygame.K_ESCAPE, pygame.K_BACKSPACE):
+                        page = "home"
+                    elif event.key in (pygame.K_RETURN, pygame.K_KP_ENTER):
+                        message = "Este módulo está preparado para receber o respetivo serviço."
                 elif page == "browser":
-                    if event.key == pygame.K_ESCAPE:
+                    if event.key in (pygame.K_ESCAPE, pygame.K_BACKSPACE):
                         page = "home"
                     elif event.key == pygame.K_BACKSPACE:
                         browser_url = browser_url[:-1]
@@ -297,8 +308,8 @@ def main():
                 elif page == "apps":
                     if event.key == pygame.K_ESCAPE:
                         page = "home"
-                    elif event.key in (pygame.K_UP, pygame.K_DOWN):
-                        app_selected = (app_selected + (1 if event.key == pygame.K_DOWN else -1)) % 3
+                    elif event.key in (pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT):
+                        app_selected = (app_selected + (1 if event.key in (pygame.K_DOWN, pygame.K_RIGHT) else -1)) % 4
                     elif event.key in (pygame.K_RETURN, pygame.K_KP_ENTER):
                         if app_selected == 0:
                             page = "browser"
@@ -390,7 +401,7 @@ def main():
                         page = "home"
                     elif event.key in (pygame.K_UP, pygame.K_DOWN):
                         tv_selected = (tv_selected + (1 if event.key == pygame.K_DOWN else -1)) % 2
-                    elif event.key in (pygame.K_PAGEUP, pygame.K_PAGEDOWN):
+                    elif event.key in (pygame.K_PAGEUP, pygame.K_PAGEDOWN, pygame.K_CHANNELUP, pygame.K_CHANNELDOWN):
                         message = "A mudança de canal ficará disponível quando existir uma lista de canais."
                     elif event.key in (pygame.K_RETURN, pygame.K_KP_ENTER):
                         if tv_selected == 0:
