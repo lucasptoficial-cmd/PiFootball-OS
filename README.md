@@ -104,3 +104,13 @@ Para regressar à versão imediatamente anterior:
 bash scripts/rollback.sh
 ```
 O rollback também pede confirmação. O atualizador só faz atualizações diretas (fast-forward) e recusa atualizar ou reverter quando deteta alterações locais, para evitar apagá-las. A versão anterior fica guardada localmente em `.git`; é necessário ter instalado o sistema através de um clone Git e ter ligação à Internet para procurar atualizações. Não é um atualizador automático em segundo plano.
+
+
+## PiCraft — amigos, LAN, chat e comandos (interface inicial)
+
+- Ícone próprio PiCraft (picareta em SVG) e identificação no gestor.
+- Separador **Amigos & LAN** com lista local de amigos, nome de jogador ligado ao perfil disponível no navegador, escolha de modo Sobrevivência/Criativo e preparação de códigos para mundos privados/LAN.
+- Interface de chat local com histórico no navegador.
+- Controlos documentados: teclado (WASD/setas, Espaço, Enter/clique, E, 1–6, Esc) e esquema de gamepad (D-pad/analógico, A/OK, X, Y, LB/RB, START).
+- Limite pretendido: 7 jogadores por mapa, incluindo o anfitrião.
+- **Limitação atual:** esta alteração cria a interface e guarda dados apenas no navegador. Não implementa ainda descoberta LAN, ligações entre dispositivos, convites reais, entrada durante a partida, sincronização de mundos ou chat em rede. O esquema de gamepad está documentado, mas ainda não está ligado ao motor do jogo.
