@@ -3,6 +3,7 @@ The layout is authored on a 1672x941 design canvas and scaled to the display.
 """
 import math
 import pygame
+from datetime import datetime
 
 BASE_W, BASE_H = 1672, 941
 ORANGE = (255, 145, 0)
@@ -111,7 +112,9 @@ def _header(dst, selected):
     pygame.draw.ellipse(dst, (75, 210, 20), (1250, 85, 35, 18))
     # Status capsule.
     _rounded(dst, (1290, 32, 335, 52), (10, 11, 13), (60, 60, 60), 24, 1)
-    _text(dst, "◉   🎮  |  22:45  |  04/11/2026", 1310, 43, 19, WHITE, True)
+    now = datetime.now()
+    status = "◉   🎮  |  " + now.strftime("%H:%M") + "  |  " + now.strftime("%d/%m/%Y")
+    _text(dst, status, 1310, 43, 19, WHITE, True)
 
 def _nav(dst, selected):
     x0, y, w, h, gap = 52, 245, 195, 168, 13
