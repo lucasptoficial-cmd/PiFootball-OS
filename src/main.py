@@ -12,6 +12,7 @@ import subprocess
 from pathlib import Path
 from datetime import datetime
 import pygame
+from visual_theme import render as render_theme
 
 W, H = 1280, 720
 BG=(12,14,18); PANEL=(24,27,33); ORANGE=(255,119,32)
@@ -473,155 +474,15 @@ def main():
                             password += event.unicode
                         else:
                             config[key] = config.get(key, "") + event.unicode
-        screen.fill(BG)
-        pygame.draw.rect(screen, PANEL, (0, 0, width, 108))
-        screen.blit(big.render("PiFOOTBALL", True, WHITE), (38, 24))
-        screen.blit(big.render("OS", True, ORANGE), (345, 24))
-        stamp = small.render(datetime.now().strftime("%d/%m/%Y   %H:%M"), True, MUTED)
-        screen.blit(stamp, (width - stamp.get_width() - 30, 45))
-
-        if page == "home":
-            screen.blit(big.render("O TEU CENTRO DE ENTRETENIMENTO", True, WHITE), (40, 140))
-            screen.blit(small.render("Perfil: " + active_profile, True, GREEN), (42, 190))
-            cols, gap, cardh = 4, 14, 150
-            cardw = (width - 80 - (cols - 1) * gap) // cols
-            for i, (name, desc) in enumerate(ITEMS):
-                row, col = divmod(i, cols)
-                x, y = 40 + col * (cardw + gap), 250 + row * (cardh + 18)
-                rect = pygame.Rect(x, y, cardw, cardh)
-                pygame.draw.rect(screen, PANEL, rect, border_radius=10)
-                if i == selected:
-                    pygame.draw.rect(screen, ORANGE, rect, width=4, border_radius=10)
-                screen.blit(med.render(name, True, ORANGE if i == selected else WHITE), (x + 18, y + 28))
-                screen.blit(small.render(desc, True, MUTED), (x + 18, y + 78))
-        elif page == "browser":
-            screen.blit(big.render("NAVEGADOR", True, WHITE), (42, 145))
-            screen.blit(small.render("Endereço Web — o navegador abre numa janela própria", True, MUTED), (46, 205))
-            rect = pygame.Rect(44, 270, min(width - 88, 1080), 76)
-            pygame.draw.rect(screen, PANEL, rect, border_radius=9)
-            pygame.draw.rect(screen, ORANGE, rect, width=3, border_radius=9)
-            screen.blit(med.render(browser_url[-75:] or "Escreve um endereço...", True, WHITE), (rect.x + 18, rect.y + 22))
-            installed = bool(shutil.which("netsurf-gtk") or shutil.which("netsurf"))
-            state = "NetSurf instalado" if installed else "NetSurf não instalado — usa a Loja de aplicações"
-            screen.blit(small.render(state, True, GREEN if installed else ORANGE), (46, 375))
-            screen.blit(small.render("Escreve o endereço · ENTER: abrir · BACKSPACE: apagar · BACK: voltar", True, MUTED), (44, height - 55))
-        elif page == "apps":
-            screen.blit(big.render("APLICAÇÕES", True, WHITE), (42, 145))
-            screen.blit(small.render("Aplicações compatíveis com Raspberry Pi OS", True, MUTED), (46, 205))
-            options = [("Navegador", "Abrir um endereço Web"), ("Loja de aplicações", "Instalar programas compatíveis"), ("Mais aplicações", "Em desenvolvimento")]
-            for i, (label, desc) in enumerate(options):
-                y = 260 + i * 105
-                rect = pygame.Rect(44, y, min(width - 88, 900), 82)
-                pygame.draw.rect(screen, PANEL, rect, border_radius=9)
-                if i == app_selected:
-                    pygame.draw.rect(screen, ORANGE, rect, width=3, border_radius=9)
-                screen.blit(med.render(label, True, WHITE), (rect.x + 18, rect.y + 12))
-                screen.blit(small.render(desc, True, MUTED), (rect.x + 18, rect.y + 49))
-            screen.blit(small.render("Setas: escolher   OK: abrir   BACK: voltar", True, MUTED), (44, height - 55))
-        elif page == "store":
-            screen.blit(big.render("LOJA DE APLICAÇÕES", True, WHITE), (42, 112))
-            screen.blit(small.render("REDES, ENTRETENIMENTO E PROGRAMAS LINUX", True, MUTED), (46, 166))
-            store_apps = [
-                ("PiCraft — Minecraft", "picraft", "apps/picraft/index.html"),
-                ("PiModCraft — Mods", "pimodcraft", "apps/pimodcraft/index.html"),
-                ("PiTube", "pitube", "apps/pitube/index.html"),
-                ("YouTube", "web", "https://www.youtube.com"),
-                ("WhatsApp", "web", "https://web.whatsapp.com"),
-                ("Instagram", "web", "https://www.instagram.com"),
-                ("Discord", "web", "https://discord.com/app"),
-                ("Roblox", "info", "Roblox não tem cliente oficial para Linux."),
-                ("Navegador NetSurf", "pkg", "netsurf-gtk"),
-                ("Leitor multimédia VLC", "pkg", "vlc"),
-                ("Leitor de música Audacious", "pkg", "audacious"),
-            ]
-            for i, (label, kind, target) in enumerate(store_apps):
-                col, row = i % 2, i // 2
-                rect = pygame.Rect(44 + col * 510, 190 + row * 82, min(480, (width - 110) // 2), 82)
-                pygame.draw.rect(screen, PANEL, rect, border_radius=9)
-                if i == store_selected and pending_install is None:
-                    pygame.draw.rect(screen, ORANGE, rect, width=3, border_radius=9)
-                if kind in ("picraft", "pimodcraft"):
-                    status, status_color = "APP LOCAL", GREEN
-                elif kind == "pitube":
-                    status, status_color = "INTERFACE TV", GREEN
-                elif kind == "youtube":
-                    status, status_color = "APP WEB", GREEN
-                elif kind == "web":
-                    status, status_color = "VERSÃO WEB", GREEN
-                elif kind == "roblox":
-                    status, status_color = "EXPERIMENTAL / INCOMPATÍVEL", ORANGE
-                elif kind == "info":
-                    status, status_color = "INFORMAÇÃO", MUTED
-                else:
-                    status = "INSTALADO" if shutil.which(target) else "PACOTE LINUX"
-                    status_color = GREEN if status == "INSTALADO" else MUTED
-                screen.blit(med.render(label, True, WHITE), (rect.x + 16, rect.y + 12))
-                screen.blit(small.render(status, True, status_color), (rect.x + 16, rect.y + 48))
-            if pending_install:
-                screen.blit(small.render("Confirmas instalar " + pending_install + "? OK confirma · N cancela", True, ORANGE), (44, height - 92))
-            else:
-                screen.blit(small.render("Setas: navegar · OK: abrir/selecionar · BACK: voltar", True, MUTED), (44, height - 55))
-        elif page == "settings":
-            screen.blit(big.render("DEFINIÇÕES", True, WHITE), (42, 145))
-            screen.blit(small.render("Configuração geral do PiFootball OS", True, MUTED), (46, 205))
-            options = [("Animação de arranque", "ATIVADA" if settings["boot_animation"] else "DESATIVADA"), ("Gerir utilizadores", "ABRIR")]
-            for i, (label, value) in enumerate(options):
-                y = 270 + i * 100
-                rect = pygame.Rect(44, y, min(width - 88, 900), 76)
-                pygame.draw.rect(screen, PANEL, rect, border_radius=9)
-                if i == settings_index:
-                    pygame.draw.rect(screen, ORANGE, rect, width=3, border_radius=9)
-                screen.blit(med.render(label, True, WHITE), (rect.x + 18, rect.y + 20))
-                val = small.render(value, True, GREEN if i == 0 else ORANGE)
-                screen.blit(val, (rect.right - val.get_width() - 20, rect.y + 27))
-            screen.blit(small.render("Setas: escolher   OK: alterar/abrir   BACK: voltar", True, MUTED), (44, height - 55))
-        elif page == "tv":
-            screen.blit(big.render("TV & IPTV", True, WHITE), (42, 145))
-            screen.blit(small.render("Escolhe uma função de televisão", True, MUTED), (46, 205))
-            tv_options = [("Configurar IPTV", "Dados do teu fornecedor autorizado"), ("Guia de canais", "Ainda não disponível")]
-            for i, (label, desc) in enumerate(tv_options):
-                y = 270 + i * 100
-                rect = pygame.Rect(44, y, min(width - 88, 900), 76)
-                pygame.draw.rect(screen, PANEL, rect, border_radius=9)
-                if i == tv_selected:
-                    pygame.draw.rect(screen, ORANGE, rect, width=3, border_radius=9)
-                screen.blit(med.render(label, True, WHITE), (rect.x + 18, rect.y + 12))
-                screen.blit(small.render(desc, True, MUTED), (rect.x + 18, rect.y + 47))
-            screen.blit(small.render("Setas: escolher   OK: abrir   BACK: voltar", True, MUTED), (44, height - 55))
-        elif page == "users":
-            screen.blit(big.render("UTILIZADORES", True, WHITE), (42, 145))
-            screen.blit(small.render("Perfil ativo: " + active_profile, True, GREEN), (46, 210))
-            screen.blit(med.render("Perfis guardados", True, WHITE), (46, 260))
-            for i, name in enumerate(profiles[:10]):
-                color = ORANGE if name == active_profile else MUTED
-                screen.blit(med.render(name, True, color), (60, 305 + i * 36))
-            box = pygame.Rect(620, 260, min(560, width - 660), 72)
-            pygame.draw.rect(screen, PANEL, box, border_radius=8)
-            pygame.draw.rect(screen, ORANGE, box, 2, border_radius=8)
-            screen.blit(small.render("Criar ou selecionar perfil", True, MUTED), (box.x + 14, box.y + 8))
-            screen.blit(med.render(new_profile_name or "Escreve um nome...", True, WHITE), (box.x + 14, box.y + 36))
-            screen.blit(small.render("Cima/baixo: trocar perfil   ENTER: criar/selecionar   F2: apagar perfil", True, MUTED), (44, height - 92))
-            screen.blit(small.render("OK: criar/selecionar   BACK: voltar   F2: apagar perfil", True, MUTED), (44, height - 62))
-            screen.blit(small.render("Os perfis são guardados localmente neste Raspberry Pi.", True, GREEN), (44, height - 34))
-        else:
-            screen.blit(big.render("CONFIGURAR IPTV", True, WHITE), (42, 145))
-            screen.blit(small.render("Introduz os dados fornecidos pelo teu serviço IPTV autorizado.", True, MUTED), (44, 205))
-            for i, (label, key) in enumerate(FIELDS):
-                y = 250 + i * 72
-                active = i == field_index
-                rect = pygame.Rect(44, y, min(width - 88, 900), 58)
-                pygame.draw.rect(screen, PANEL, rect, border_radius=8)
-                if active:
-                    pygame.draw.rect(screen, ORANGE, rect, width=3, border_radius=8)
-                screen.blit(small.render(label, True, MUTED), (rect.x + 14, rect.y + 7))
-                value = password if key == "password" else config.get(key, "")
-                shown = ("•" * len(value)) if key == "password" else value
-                if not shown:
-                    shown = "Escrever..."
-                screen.blit(med.render(shown[:75], True, WHITE), (rect.x + 260, rect.y + 17))
-            screen.blit(small.render("ENTER no último campo: guardar configuração   TAB/setas: mudar campo   ESC: voltar", True, MUTED), (44, height - 92))
-            screen.blit(small.render("A palavra-passe fica apenas na memória desta sessão e não é guardada.", True, GREEN), (44, height - 62))
-            screen.blit(small.render("Nota: esta versão guarda os dados básicos; ainda não liga nem reproduz canais.", True, MUTED), (44, height - 34))
+        render_theme(
+            screen,
+            page=page,
+            selected=selected,
+            app_selected=app_selected,
+            store_selected=store_selected,
+            active_profile=active_profile,
+            message=message,
+        )
 
         if goal_alert_started is not None:
             goal_elapsed = pygame.time.get_ticks() - goal_alert_started
@@ -630,30 +491,6 @@ def main():
             else:
                 goal_alert_started = None
 
-        pygame.draw.rect(screen, PANEL, (0, height - 48, width, 48))
-        if page == "home":
-            footer_text = ITEMS[selected][0] + " — " + ITEMS[selected][1]
-        elif page == "tv":
-            footer_text = "TV & IPTV — ENTER para abrir · ESC para voltar"
-        elif page == "browser":
-            footer_text = "INTERNET — escreve um endereço e carrega ENTER"
-        elif page == "apps":
-            footer_text = "APLICAÇÕES — escolhe Navegador ou Loja"
-        elif page == "store":
-            footer_text = "LOJA — ENTER para abrir · ESC para voltar"
-        elif page == "settings":
-            footer_text = "DEFINIÇÕES — ENTER para alterar · ESC para voltar"
-        elif page == "users":
-            footer_text = "UTILIZADORES — ENTER para guardar · F2 para apagar"
-        elif page == "iptv":
-            footer_text = "IPTV — configura os dados do teu serviço autorizado"
-        else:
-            footer_text = message
-        # Mensagens de operação continuam visíveis fora do ecrã inicial.
-        if page != "home" and message and message != "Bem-vindo ao PiFootball OS":
-            footer_text = message
-        footer_surface = small.render(footer_text, True, WHITE)
-        screen.blit(footer_surface, (20, height - 31))
         pygame.display.flip()
         clock.tick(30)
 
