@@ -44,13 +44,11 @@ function pollGamepads(now){
     const was=i=>!!padPrevious[pad.index]?.[i];
     const edge=(i,fn)=>{if(pressed(i)&&!was(i))fn()};
     const axes=pad.axes||[],lx=axes[0]||0,ly=axes[1]||0,rx=axes[2]||0,ry=axes[3]||0;
-    const left=pressed(14)||lx<-.6,right=pressed(15)||lx>.6;
-    const up=pressed(12)||ly<-.6,down=pressed(13)||ly>.6;
     if(!inventoryOpen&&!chatOpen&&now-padDirectionAt>155){
-      if(left){move(-1,0);padDirectionAt=now}
-      else if(right){move(1,0);padDirectionAt=now}
-      else if(up){move(0,-1);padDirectionAt=now}
-      else if(down){move(0,1);padDirectionAt=now}
+      if(lx<-.6){move(-1,0);padDirectionAt=now}
+      else if(lx>.6){move(1,0);padDirectionAt=now}
+      else if(ly<-.6){move(0,-1);padDirectionAt=now}
+      else if(ly>.6){move(0,1);padDirectionAt=now}
     }
     if(!inventoryOpen&&!chatOpen&&now-aimDirectionAt>110){
       if(Math.abs(rx)>.35||Math.abs(ry)>.35){
@@ -66,7 +64,8 @@ function pollGamepads(now){
       edge(4,()=>{selected=(selected+types.length-1)%types.length;renderBar()}); // L1
       edge(5,()=>{selected=(selected+1)%types.length;renderBar()}); // R1
       edge(3,()=>toggleInventory(true)); // Triângulo / Y
-      edge(0,()=>jump());             // X / A
+      edge(0,()=>jump());             // Cruz / A: saltar
+      edge(2,()=>{const c=world[aim.y][aim.x];if(c.z){selected=c.t;renderBar();document.getElementById("hint").textContent="Bloco selecionado: "+types[selected].name}}); // Quadrado / X: selecionar bloco apontado
       edge(10,()=>{sneaking=!sneaking;document.getElementById("hint").textContent=sneaking?"Agachar (L3)":"Agachar desligado"}); // L3
       edge(11,()=>{sprinting=!sprinting;document.getElementById("hint").textContent=sprinting?"Correr (R3)":"Correr desligado"}); // R3
       edge(13,()=>showChat());       // D-pad baixo
