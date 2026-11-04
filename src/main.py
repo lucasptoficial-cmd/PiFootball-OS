@@ -401,7 +401,7 @@ def main():
                         page = "home"
                     elif event.key in (pygame.K_UP, pygame.K_DOWN):
                         tv_selected = (tv_selected + (1 if event.key == pygame.K_DOWN else -1)) % 2
-                    elif event.key in (pygame.K_PAGEUP, pygame.K_PAGEDOWN, pygame.K_CHANNELUP, pygame.K_CHANNELDOWN):
+                    elif event.key in (pygame.K_PAGEUP, pygame.K_PAGEDOWN):
                         message = "A mudança de canal ficará disponível quando existir uma lista de canais."
                     elif event.key in (pygame.K_RETURN, pygame.K_KP_ENTER):
                         if tv_selected == 0:
