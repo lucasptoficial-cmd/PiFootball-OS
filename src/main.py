@@ -219,6 +219,7 @@ def main():
     tv_selected = 0
     app_selected = 0
     store_selected = 0
+    store_apps = []
     browser_url = "https://duckduckgo.com"
     pending_install = None
     install_process = None
@@ -491,6 +492,7 @@ def main():
             selected=selected,
             app_selected=app_selected,
             store_selected=store_selected,
+            store_apps=store_apps if page == "store" else None,
             active_profile=active_profile,
             message=message,
         )
