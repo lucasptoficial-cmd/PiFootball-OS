@@ -173,15 +173,28 @@ def _app_dashboard(dst, app_selected=0, store_apps=None, store_selected=0, messa
         ("Discord", "Fala com os teus amigos", "◉", (75,85,235)),
         ("IPTV Player", "Canais IPTV gratuitos", "▣", (115,100,90))
     ]
-    for i, app in enumerate(apps[:4]):
+    start = max(0, min(store_selected, max(0, len(apps)-4)))
+    visible = apps[start:start+4]
+    symbols = {"picraft":"⛏", "pimodcraft":"⚒", "pitube":"▶", "youtube":"▶", "web":"◉", "roblox":"◇", "pkg":"⬇"}
+    colors = {"picraft":(50,130,65), "pimodcraft":(135,85,190), "pitube":(210,0,0),
+              "youtube":(235,0,0), "web":(60,100,220), "roblox":(80,80,80), "pkg":(120,100,70)}
+    for i, app in enumerate(visible):
         if len(app) >= 4:
             name, desc, symbol, color = app[:4]
+        elif len(app) == 3:
+            name, kind, target = app
+            desc = {"picraft":"Minecraft para PiFootball", "pimodcraft":"Mods e complementos",
+                    "pitube":"Vídeos e transmissões", "youtube":"Vídeos e transmissões",
+                    "web":"Aplicação web", "roblox":"Compatibilidade experimental",
+                    "pkg":"Aplicação do sistema"}.get(kind, "Aplicação")
+            symbol, color = symbols.get(kind, "▣"), colors.get(kind, (100,100,100))
         else:
             name, desc = app[0], app[1]
             symbol, color = "▣", (100,100,100)
         y = 516 + i*64
-        if i == store_selected:
+        if start+i == store_selected:
             pygame.draw.rect(dst, (90,50,10), (785,y-4,810,60), border_radius=12)
+            pygame.draw.rect(dst, (255,150,0), (785,y-4,810,60), 2, border_radius=12)
         pygame.draw.line(dst, (65,53,40), (785,y+57), (1590,y+57), 1)
         pygame.draw.rect(dst, color, (800,y,65,51), border_radius=14)
         _text(dst, symbol, 832, y+8, 30, WHITE, True, True)
