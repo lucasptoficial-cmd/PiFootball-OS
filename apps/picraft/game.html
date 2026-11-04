@@ -1,93 +1,4 @@
-/* Mapeamento confirmado para comando PlayStation dentro do PiCraft.
-   L2 interagir/colocar · R2 partir · L1/R1 hotbar · L3 agachar · R3 correr
-   Analógico esquerdo mover · analógico direito orientar alvo/câmara
-   Triângulo inventário · X saltar · D-pad baixo chat · Options sair/pausa
-   D-pad direito alterna Survival > Criativo > Aventura > Espectador. */
-let padPrevious=[],padDirectionAt=0,aimDirectionAt=0;
-let gameModeIndex=0,sneaking=false,sprinting=false,jumpUntil=0;
-const gameModes=["Survival","Criativo","Aventura","Espectador"];
-let chatOpen=false;
-function showChat(){
-  let panel=document.getElementById("picraftChat");
-  if(!panel){
-    panel=document.createElement("div");
-    panel.id="picraftChat";
-    panel.style.cssText="position:fixed;left:16px;bottom:82px;width:min(440px,90vw);padding:12px;background:#090d12ed;border:2px solid #ff9800;border-radius:12px;z-index:8;color:white;font:14px system-ui";
-    panel.innerHTML='<b>Chat local PiCraft</b><div id="picraftChatLog" style="height:90px;overflow:auto;margin:8px 0;color:#ddd">Chat local — multiplayer ainda não ligado.</div><input id="picraftChatInput" maxlength="120" placeholder="Escreve uma mensagem..." style="width:100%;padding:9px;background:#18232d;color:white;border:1px solid #ff9800;border-radius:6px">';
-    document.body.appendChild(panel);
-    panel.querySelector("input").addEventListener("keydown",e=>{
-      if(e.key==="Enter"&&e.target.value.trim()){
-        const line=document.createElement("div");line.textContent="Tu: "+e.target.value.trim();
-        document.getElementById("picraftChatLog").appendChild(line);e.target.value="";
-      }else if(e.key==="Escape"){chatOpen=false;panel.style.display="none"}
-    });
-  }
-  chatOpen=!chatOpen;panel.style.display=chatOpen?"block":"none";
-  if(chatOpen)panel.querySelector("input").focus();
-}
-function setGameMode(){
-  gameModeIndex=(gameModeIndex+1)%gameModes.length;
-  document.getElementById("hint").textContent="Modo de jogo: "+gameModes[gameModeIndex];
-}
-function jump(){
-  jumpUntil=performance.now()+420;
-  sound(360,.07);
-  document.getElementById("hint").textContent="Salto · "+gameModes[gameModeIndex];
-  draw();
-}
-function pollGamepads(now){
-  const pads=navigator.getGamepads?navigator.getGamepads():[];
-  for(const pad of pads){
-    if(!pad)continue;
-    const buttons=pad.buttons||[];
-    const pressed=i=>!!buttons[i]?.pressed;
-    const was=i=>!!padPrevious[pad.index]?.[i];
-    const edge=(i,fn)=>{if(pressed(i)&&!was(i))fn()};
-    const axes=pad.axes||[],lx=axes[0]||0,ly=axes[1]||0,rx=axes[2]||0,ry=axes[3]||0;
-    if(!inventoryOpen&&!chatOpen&&now-padDirectionAt>155){
-      if(lx<-.6){move(-1,0);padDirectionAt=now}
-      else if(lx>.6){move(1,0);padDirectionAt=now}
-      else if(ly<-.6){move(0,-1);padDirectionAt=now}
-      else if(ly>.6){move(0,1);padDirectionAt=now}
-    }
-    if(!inventoryOpen&&!chatOpen&&now-aimDirectionAt>110){
-      if(Math.abs(rx)>.35||Math.abs(ry)>.35){
-        const dx=Math.abs(rx)>.35?(rx>0?1:-1):0;
-        const dy=Math.abs(ry)>.35?(ry>0?1:-1):0;
-        aim={x:Math.max(0,Math.min(W-1,aim.x+dx)),y:Math.max(0,Math.min(H-1,aim.y+dy))};
-        aimDirectionAt=now;draw();
-      }
-    }
-    if(!inventoryOpen&&!chatOpen){
-      edge(6,()=>action(true));       // L2: interagir/colocar bloco
-      edge(7,()=>action(false));      // R2: partir bloco
-      edge(4,()=>{selected=(selected+types.length-1)%types.length;renderBar()}); // L1
-      edge(5,()=>{selected=(selected+1)%types.length;renderBar()}); // R1
-      edge(3,()=>toggleInventory(true)); // Triângulo / Y
-      edge(0,()=>jump());             // Cruz / A: saltar
-      edge(2,()=>{const c=world[aim.y][aim.x];if(c.z){selected=c.t;renderBar();document.getElementById("hint").textContent="Bloco selecionado: "+types[selected].name}}); // Quadrado / X: selecionar bloco apontado
-      edge(10,()=>{sneaking=!sneaking;document.getElementById("hint").textContent=sneaking?"Agachar (L3)":"Agachar desligado"}); // L3
-      edge(11,()=>{sprinting=!sprinting;document.getElementById("hint").textContent=sprinting?"Correr (R3)":"Correr desligado"}); // R3
-      edge(13,()=>showChat());       // D-pad baixo
-      edge(15,()=>setGameMode());    // D-pad direita
-      edge(9,()=>{location.href="index.html"}); // Options / Start
-    }else if(inventoryOpen){
-      edge(1,()=>toggleInventory(false)); // Círculo fecha inventário
-      edge(9,()=>toggleInventory(false));
-    }else if(chatOpen){
-      edge(1,()=>showChat());
-    }
-    padPrevious[pad.index]=buttons.map(b=>!!b.pressed);
-  }
-  requestAnimationFrame(pollGamepads);
-}
-addEventListener("gamepadconnected",e=>{
-  document.getElementById("hint").textContent="Comando PlayStation ligado · L2 interagir · R2 partir · L1/R1 itens · △ inventário";
-});
-addEventListener("gamepaddisconnected",()=>{
-  document.getElementById("hint").textContent="Comando desligado · teclado/WASD ou controlos tácteis";
-});
-requestAnimationFrame(pollGamepads);<!doctype html>
+<!doctype html>
 <html lang="pt-PT"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PiCraft — Mundo</title>
 <style>
 :root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;background:#101820;color:#f4f6f8;font:15px system-ui;overflow:hidden}header{height:54px;background:#172532;border-bottom:2px solid #e98a36;display:flex;align-items:center;justify-content:space-between;padding:0 14px}header b{font-size:20px}button{background:#263b4c;color:white;border:1px solid #506273;border-radius:7px;padding:8px 12px}button:focus{outline:2px solid #ffc15c}#game{display:block;width:100vw;height:calc(100dvh - 124px);touch-action:none}#bar{height:70px;background:#172532;display:flex;align-items:center;justify-content:center;gap:6px;padding:5px;flex-wrap:wrap}.slot{width:48px;height:50px;padding:3px;border:2px solid #71808b;background:#27333d}.slot.active{border:3px solid #ffc15c;background:#46515a}.swatch{display:block;width:23px;height:23px;margin:auto;border:1px solid #ffffff55}.slot small{display:block;font-size:10px;text-align:center}#hint{position:fixed;top:64px;left:10px;background:#101820bb;padding:7px 10px;border-radius:8px;max-width:75vw}#touch{position:fixed;right:10px;bottom:82px;display:grid;grid-template-columns:repeat(3,45px);gap:4px}#touch button{height:42px;background:#182a39dd;font-size:18px}#touch .empty{visibility:hidden}@media(min-width:850px){#touch{opacity:.55}} 
@@ -137,8 +48,41 @@ function toggleInventory(force){inventoryOpen=typeof force==="boolean"?force:!in
 function renderInventory(){const box=document.getElementById('craftRecipes');if(box){box.innerHTML='<b>Receitas</b>';recipes.forEach(r=>{const b=document.createElement('button');b.textContent=r[0]+' ('+r[2]+' materiais)';b.onclick=()=>{if((inventory[r[1]]||0)<r[2]){document.getElementById('hint').textContent='Faltam materiais.';return}inventory[r[1]]-=r[2];inventory[r[3]]=(inventory[r[3]]||0)+r[4];renderBar();renderInventory();sound(520,.1)};box.appendChild(b)})}const main=document.getElementById("mainSlots"),hot=document.getElementById("hotSlots");main.innerHTML="";hot.innerHTML="";for(let i=0;i<types.length;i++){const slot=document.createElement("button");slot.className="inv-slot";if(i<types.length&&inventory[i]>0){slot.innerHTML='<span class="swatch" style="background:'+types[i].top+'"></span><small>'+inventory[i]+'</small>';slot.title=types[i].name;slot.onclick=()=>{selected=i;renderBar();renderInventory();sound(330)}}main.appendChild(slot)}for(let i=0;i<9;i++){const slot=document.createElement("button");slot.className="inv-slot"+(selected===i?" selected":"");if(i<types.length){slot.innerHTML='<span class="swatch" style="background:'+types[i].top+'"></span><small>'+inventory[i]+'</small>';slot.title=types[i].name;slot.onclick=()=>{selected=i;renderBar();renderInventory();sound(330)}}hot.appendChild(slot)}}
 function renderBar(){const bar=document.getElementById('bar');bar.innerHTML='';types.slice(0,9).forEach((t,i)=>{const b=document.createElement('button');b.className='slot'+(selected===i?' active':'');b.innerHTML='<span class="swatch" style="background:'+t.top+'"></span><small>'+t.name+' · '+inventory[i]+'</small>';b.onclick=()=>{selected=i;renderBar();sound(300)};bar.appendChild(b)})}
 document.getElementById('inventoryButton').onclick=()=>toggleInventory();document.getElementById('closeInv').onclick=()=>toggleInventory(false);
-/* Esquema acordado N’PLAY SKILL 8.1 / PS4. Ações ainda não suportadas ficam documentadas em controls.json. */
-let padPrevious=[],padDirectionAt=0;
+/* Mapeamento confirmado para comando PlayStation dentro do PiCraft.
+   L2 interagir/colocar · R2 partir · L1/R1 hotbar · L3 agachar · R3 correr
+   Analógico esquerdo mover · analógico direito orientar alvo/câmara
+   Triângulo inventário · Cruz saltar · D-pad baixo chat · Options sair/pausa
+   D-pad direito alterna Survival > Criativo > Aventura > Espectador. */
+let padPrevious=[],padDirectionAt=0,aimDirectionAt=0;
+let gameModeIndex=0,sneaking=false,sprinting=false;
+const gameModes=["Survival","Criativo","Aventura","Espectador"];
+let chatOpen=false;
+function showChat(){
+  let panel=document.getElementById("picraftChat");
+  if(!panel){
+    panel=document.createElement("div");
+    panel.id="picraftChat";
+    panel.style.cssText="position:fixed;left:16px;bottom:82px;width:min(440px,90vw);padding:12px;background:#090d12ed;border:2px solid #ff9800;border-radius:12px;z-index:8;color:white;font:14px system-ui";
+    panel.innerHTML='<b>Chat local PiCraft</b><div id="picraftChatLog" style="height:90px;overflow:auto;margin:8px 0;color:#ddd">Chat local — multiplayer ainda não ligado.</div><input id="picraftChatInput" maxlength="120" placeholder="Escreve uma mensagem..." style="width:100%;padding:9px;background:#18232d;color:white;border:1px solid #ff9800;border-radius:6px">';
+    document.body.appendChild(panel);
+    panel.querySelector("input").addEventListener("keydown",e=>{
+      if(e.key==="Enter"&&e.target.value.trim()){
+        const line=document.createElement("div");line.textContent="Tu: "+e.target.value.trim();
+        document.getElementById("picraftChatLog").appendChild(line);e.target.value="";
+      }else if(e.key==="Escape"){chatOpen=false;panel.style.display="none"}
+    });
+  }
+  chatOpen=!chatOpen;panel.style.display=chatOpen?"block":"none";
+  if(chatOpen)panel.querySelector("input").focus();
+}
+function setGameMode(){
+  gameModeIndex=(gameModeIndex+1)%gameModes.length;
+  document.getElementById("hint").textContent="Modo de jogo: "+gameModes[gameModeIndex];
+}
+function jump(){
+  sound(360,.07);
+  document.getElementById("hint").textContent="Salto · "+gameModes[gameModeIndex];
+}
 function pollGamepads(now){
   const pads=navigator.getGamepads?navigator.getGamepads():[];
   for(const pad of pads){
@@ -147,36 +91,49 @@ function pollGamepads(now){
     const pressed=i=>!!buttons[i]?.pressed;
     const was=i=>!!padPrevious[pad.index]?.[i];
     const edge=(i,fn)=>{if(pressed(i)&&!was(i))fn()};
-    const axes=pad.axes||[],x=axes[0]||0,y=axes[1]||0;
-    const sprint=pressed(11);
-    const interval=sprint?85:155;
-    if(now-padDirectionAt>interval){
-      if(x<-.6){move(-1,0);padDirectionAt=now}
-      else if(x>.6){move(1,0);padDirectionAt=now}
-      else if(y<-.6){move(0,-1);padDirectionAt=now}
-      else if(y>.6){move(0,1);padDirectionAt=now}
+    const axes=pad.axes||[],lx=axes[0]||0,ly=axes[1]||0,rx=axes[2]||0,ry=axes[3]||0;
+    if(!inventoryOpen&&!chatOpen&&now-padDirectionAt>155){
+      if(lx<-.6){move(-1,0);padDirectionAt=now}
+      else if(lx>.6){move(1,0);padDirectionAt=now}
+      else if(ly<-.6){move(0,-1);padDirectionAt=now}
+      else if(ly>.6){move(0,1);padDirectionAt=now}
     }
-    if(!inventoryOpen){
-      edge(7,()=>action(false)); // R2: partir/quebrar blocos
-      edge(5,()=>{selected=(selected+1)%types.length;renderBar()}); // R1: item seguinte
-      edge(4,()=>{selected=(selected+types.length-1)%types.length;renderBar()}); // L1: item anterior
-      edge(3,()=>toggleInventory(true)); // Triângulo / Y: inventário
-      edge(6,()=>{document.getElementById('hint').textContent='L2: interagir com blocos — integração pendente no protótipo.'});
-      edge(0,()=>{document.getElementById('hint').textContent='A / Cruz: saltar — salto ainda não implementado neste protótipo.'});
-      edge(2,()=>{document.getElementById('hint').textContent='X / Quadrado: selecionar — seleção contextual ainda não implementada.'});
-      edge(1,()=>{document.getElementById('hint').textContent='B / Círculo: Shift / agachar.'});
-      edge(10,()=>{document.getElementById('hint').textContent='L3: Shift / agachar.'});
-      edge(11,()=>{document.getElementById('hint').textContent='R3: correr.'});
-      edge(13,()=>{document.getElementById('hint').textContent='Chat: interface ainda por integrar no mundo.'});
-      edge(15,()=>{document.getElementById('hint').textContent='Modo de jogo: Criativo → Aventura → Espectador → Sobrevivência.'});
-      edge(9,()=>toggleInventory());
-    }else{
-      edge(3,()=>toggleInventory(false));
+    if(!inventoryOpen&&!chatOpen&&now-aimDirectionAt>110&&(Math.abs(rx)>.35||Math.abs(ry)>.35)){
+      const dx=Math.abs(rx)>.35?(rx>0?1:-1):0;
+      const dy=Math.abs(ry)>.35?(ry>0?1:-1):0;
+      aim={x:Math.max(0,Math.min(W-1,aim.x+dx)),y:Math.max(0,Math.min(H-1,aim.y+dy))};
+      aimDirectionAt=now;draw();
+    }
+    if(!inventoryOpen&&!chatOpen){
+      edge(6,()=>action(true));       // L2: interagir/colocar bloco
+      edge(7,()=>action(false));      // R2: partir bloco
+      edge(4,()=>{selected=(selected+types.length-1)%types.length;renderBar()}); // L1
+      edge(5,()=>{selected=(selected+1)%types.length;renderBar()}); // R1
+      edge(3,()=>toggleInventory(true)); // Triângulo: inventário
+      edge(0,()=>jump());             // Cruz: saltar
+      edge(2,()=>{const c=world[aim.y][aim.x];if(c.z){selected=c.t;renderBar();document.getElementById("hint").textContent="Bloco selecionado: "+types[selected].name}}); // Quadrado: selecionar bloco
+      edge(10,()=>{sneaking=!sneaking;document.getElementById("hint").textContent=sneaking?"Agachar (L3)":"Agachar desligado"}); // L3
+      edge(11,()=>{sprinting=!sprinting;document.getElementById("hint").textContent=sprinting?"Correr (R3)":"Correr desligado"}); // R3
+      edge(13,()=>showChat());        // D-pad baixo: chat
+      edge(15,()=>setGameMode());     // D-pad direita: modo de jogo
+      edge(9,()=>{location.href="index.html"}); // Options / Start
+    }else if(inventoryOpen){
+      edge(1,()=>toggleInventory(false)); // Círculo: fechar inventário
       edge(9,()=>toggleInventory(false));
+    }else if(chatOpen){
+      edge(1,()=>showChat());
     }
     padPrevious[pad.index]=buttons.map(b=>!!b.pressed);
   }
   requestAnimationFrame(pollGamepads);
+}
+addEventListener("gamepadconnected",e=>{
+  document.getElementById("hint").textContent="Comando PlayStation ligado · L2 interagir · R2 partir · L1/R1 itens · △ inventário";
+});
+addEventListener("gamepaddisconnected",()=>{
+  document.getElementById("hint").textContent="Comando desligado · Teclado/WASD ou controlos tácteis";
+});
+requestAnimationFrame(pollGamepads);
 }
 addEventListener('gamepadconnected',e=>{
   document.getElementById('hint').textContent='Comando ligado: '+e.gamepad.id+' · analógico esquerdo: mover · R2: partir · R1/L1: itens · Triângulo: inventário';
