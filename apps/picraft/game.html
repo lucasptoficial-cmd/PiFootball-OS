@@ -48,7 +48,7 @@ function toggleInventory(force){inventoryOpen=typeof force==="boolean"?force:!in
 function renderInventory(){const box=document.getElementById('craftRecipes');if(box){box.innerHTML='<b>Receitas</b>';recipes.forEach(r=>{const b=document.createElement('button');b.textContent=r[0]+' ('+r[2]+' materiais)';b.onclick=()=>{if((inventory[r[1]]||0)<r[2]){document.getElementById('hint').textContent='Faltam materiais.';return}inventory[r[1]]-=r[2];inventory[r[3]]=(inventory[r[3]]||0)+r[4];renderBar();renderInventory();sound(520,.1)};box.appendChild(b)})}const main=document.getElementById("mainSlots"),hot=document.getElementById("hotSlots");main.innerHTML="";hot.innerHTML="";for(let i=0;i<types.length;i++){const slot=document.createElement("button");slot.className="inv-slot";if(i<types.length&&inventory[i]>0){slot.innerHTML='<span class="swatch" style="background:'+types[i].top+'"></span><small>'+inventory[i]+'</small>';slot.title=types[i].name;slot.onclick=()=>{selected=i;renderBar();renderInventory();sound(330)}}main.appendChild(slot)}for(let i=0;i<9;i++){const slot=document.createElement("button");slot.className="inv-slot"+(selected===i?" selected":"");if(i<types.length){slot.innerHTML='<span class="swatch" style="background:'+types[i].top+'"></span><small>'+inventory[i]+'</small>';slot.title=types[i].name;slot.onclick=()=>{selected=i;renderBar();renderInventory();sound(330)}}hot.appendChild(slot)}}
 function renderBar(){const bar=document.getElementById('bar');bar.innerHTML='';types.slice(0,9).forEach((t,i)=>{const b=document.createElement('button');b.className='slot'+(selected===i?' active':'');b.innerHTML='<span class="swatch" style="background:'+t.top+'"></span><small>'+t.name+' · '+inventory[i]+'</small>';b.onclick=()=>{selected=i;renderBar();sound(300)};bar.appendChild(b)})}
 document.getElementById('inventoryButton').onclick=()=>toggleInventory();document.getElementById('closeInv').onclick=()=>toggleInventory(false);
-/* Comandos NPlay Skill 8.1/2.1: suporte Gamepad API apenas dentro do PiCraft. */
+/* Esquema acordado N’PLAY SKILL 8.1 / PS4. Ações ainda não suportadas ficam documentadas em controls.json. */
 let padPrevious=[],padDirectionAt=0;
 function pollGamepads(now){
   const pads=navigator.getGamepads?navigator.getGamepads():[];
@@ -56,32 +56,41 @@ function pollGamepads(now){
     if(!pad)continue;
     const buttons=pad.buttons||[];
     const pressed=i=>!!buttons[i]?.pressed;
-    const was=(i)=>!!padPrevious[pad.index]?.[i];
+    const was=i=>!!padPrevious[pad.index]?.[i];
     const edge=(i,fn)=>{if(pressed(i)&&!was(i))fn()};
     const axes=pad.axes||[],x=axes[0]||0,y=axes[1]||0;
-    const left=pressed(14)||x<-.6,right=pressed(15)||x>.6;
-    const up=pressed(12)||y<-.6,down=pressed(13)||y>.6;
-    if(now-padDirectionAt>155){
-      if(left){move(-1,0);padDirectionAt=now}
-      else if(right){move(1,0);padDirectionAt=now}
-      else if(up){move(0,-1);padDirectionAt=now}
-      else if(down){move(0,1);padDirectionAt=now}
+    const sprint=pressed(11);
+    const interval=sprint?85:155;
+    if(now-padDirectionAt>interval){
+      if(x<-.6){move(-1,0);padDirectionAt=now}
+      else if(x>.6){move(1,0);padDirectionAt=now}
+      else if(y<-.6){move(0,-1);padDirectionAt=now}
+      else if(y>.6){move(0,1);padDirectionAt=now}
     }
     if(!inventoryOpen){
-      edge(0,()=>action(true));       // A / botão principal: colocar bloco
-      edge(1,()=>action(false));      // B / botão secundário: partir bloco
-      edge(4,()=>{selected=(selected+types.length-1)%types.length;renderBar()});
-      edge(5,()=>{selected=(selected+1)%types.length;renderBar()});
-      edge(3,()=>toggleInventory(true));
+      edge(7,()=>action(false)); // R2: partir/quebrar blocos
+      edge(5,()=>{selected=(selected+1)%types.length;renderBar()}); // R1: item seguinte
+      edge(4,()=>{selected=(selected+types.length-1)%types.length;renderBar()}); // L1: item anterior
+      edge(3,()=>toggleInventory(true)); // Triângulo / Y: inventário
+      edge(6,()=>{document.getElementById('hint').textContent='L2: interagir com blocos — integração pendente no protótipo.'});
+      edge(0,()=>{document.getElementById('hint').textContent='A / Cruz: saltar — salto ainda não implementado neste protótipo.'});
+      edge(2,()=>{document.getElementById('hint').textContent='X / Quadrado: selecionar — seleção contextual ainda não implementada.'});
+      edge(1,()=>{document.getElementById('hint').textContent='B / Círculo: Shift / agachar.'});
+      edge(10,()=>{document.getElementById('hint').textContent='L3: Shift / agachar.'});
+      edge(11,()=>{document.getElementById('hint').textContent='R3: correr.'});
+      edge(13,()=>{document.getElementById('hint').textContent='Chat: interface ainda por integrar no mundo.'});
+      edge(15,()=>{document.getElementById('hint').textContent='Modo de jogo: Criativo → Aventura → Espectador → Sobrevivência.'});
+      edge(9,()=>toggleInventory());
     }else{
-      edge(1,()=>toggleInventory(false));
+      edge(3,()=>toggleInventory(false));
+      edge(9,()=>toggleInventory(false));
     }
     padPrevious[pad.index]=buttons.map(b=>!!b.pressed);
   }
   requestAnimationFrame(pollGamepads);
 }
 addEventListener('gamepadconnected',e=>{
-  document.getElementById('hint').textContent='Comando ligado: '+e.gamepad.id+' · D-pad mover · A colocar · B partir · LB/RB escolher bloco';
+  document.getElementById('hint').textContent='Comando ligado: '+e.gamepad.id+' · analógico esquerdo: mover · R2: partir · R1/L1: itens · Triângulo: inventário';
 });
 addEventListener('gamepaddisconnected',()=>{
   document.getElementById('hint').textContent='Comando desligado · Teclado/WASD ou controlos tácteis';
