@@ -1,5 +1,5 @@
 {
-  "controller": "N’PLAY SKILL 8.1 / esquema PlayStation 4",
+  "controller": "N’PLAY SKILL 2.1 e N’PLAY SKILL 8.1",
   "mapping": {
     "R2": "partir/quebrar blocos",
     "L2": "interagir com blocos",
@@ -27,9 +27,15 @@
   ],
   "game_mode_cycle_repeats": true,
   "notes": [
-    "Este ficheiro regista o esquema acordado para o comando.",
-    "O protótipo isométrico atual ainda não implementa todas estas ações.",
-    "Em particular, interação com blocos, câmara livre, salto, chat e modos de jogo precisam de integração no motor.",
-    "L3 e B/Círculo têm ambos a função de agachar/Shift, conforme o esquema pedido."
+    "Os dois comandos usam o mesmo mapeamento lógico; os perfis podem ser selecionados no jogo.",
+    "A deteção automática depende do nome USB comunicado pelo recetor. Se o nome for genérico, escolher manualmente 2.1 ou 8.1 no botão Comando.",
+    "Os índices dos botões seguem o padrão Gamepad API standard; alguns recetores podem reportar índices diferentes e exigem calibração física.",
+    "START executa o comportamento de ESC (abrir/fechar inventário/pausa).",
+    "L3 e B/Círculo têm ambos a função de agachar/Shift, conforme o esquema pedido.",
+    "O protótipo continua sem implementação de uma câmara 3D livre; o analógico direito orienta o alvo no mundo isométrico."
+  ],
+  "controllers": [
+    "N’PLAY SKILL 2.1",
+    "N’PLAY SKILL 8.1"
   ]
 }
