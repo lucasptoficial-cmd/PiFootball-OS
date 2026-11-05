@@ -43,7 +43,7 @@ const a=iso(aim.x,aim.y,world[aim.y][aim.x].z);polygon([{x:a.x,y:a.y},{x:a.x+til
 ctx.fillStyle='#14202bdc';ctx.fillRect(10,h-36,190,26);ctx.fillStyle='white';ctx.font='13px system-ui';ctx.fillText('Posição '+player.x+', '+player.y+'  ·  Dia '+(1+Math.floor(tick/180)),18,h-18)}
 function sound(freq=180,dur=.07){try{const ac=new (AudioContext||webkitAudioContext)(),o=ac.createOscillator(),g=ac.createGain();o.type='square';o.frequency.value=freq;g.gain.setValueAtTime(.045,ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+dur);o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+dur);o.onended=()=>ac.close()}catch(e){}}
 function move(dx,dy){if(mobList.length<10&&Math.random()<.3)mobList.push({x:Math.floor(Math.random()*W),y:Math.floor(Math.random()*H),kind:Math.floor(Math.random()*mobs.length)});mobList.forEach(m=>{if(Math.random()<.3){m.x=Math.max(0,Math.min(W-1,m.x+(Math.random()<.5?-1:1)));m.y=Math.max(0,Math.min(H-1,m.y+(Math.random()<.5?-1:1)))}});const x=Math.max(0,Math.min(W-1,player.x+dx)),y=Math.max(0,Math.min(H-1,player.y+dy));player={x,y};aim={x:Math.max(0,Math.min(W-1,x+dx)),y:Math.max(0,Math.min(H-1,y+dy))};tick++;sound(240,.035);draw()}
-function action(place){if(gameModeIndex===2||gameModeIndex===3){document.getElementById('hint').textContent='Neste modo não podes alterar blocos.';return}const c=world[aim.y][aim.x];if(place){if((gameModeIndex===1||inventory[selected]>0)&&!c.z){c.z=1;c.t=selected;if(gameModeIndex!==1)inventory[selected]--;sound(420,.08)}}else if(c.z){c.z=0;if(gameModeIndex!==1)inventory[c.t]=(inventory[c.t]||0)+1;sound(110,.12)}draw();renderBar()}
+function action(place){if(gameModeIndex===1||gameModeIndex===2){document.getElementById('hint').textContent='Neste modo não podes alterar blocos.';return}const c=world[aim.y][aim.x];if(place){if((gameModeIndex===0||inventory[selected]>0)&&!c.z){c.z=1;c.t=selected;if(gameModeIndex!==0)inventory[selected]--;sound(420,.08)}}else if(c.z){c.z=0;if(gameModeIndex===3)inventory[c.t]=(inventory[c.t]||0)+1;sound(110,.12)}draw();renderBar()}
 function toggleInventory(force){inventoryOpen=typeof force==="boolean"?force:!inventoryOpen;document.getElementById("inventoryPanel").classList.toggle("open",inventoryOpen);if(inventoryOpen)renderInventory()}
 function renderInventory(){const box=document.getElementById('craftRecipes');if(box){box.innerHTML='<b>Receitas</b>';recipes.forEach(r=>{const b=document.createElement('button');b.textContent=r[0]+' ('+r[2]+' materiais)';b.onclick=()=>{if((inventory[r[1]]||0)<r[2]){document.getElementById('hint').textContent='Faltam materiais.';return}inventory[r[1]]-=r[2];inventory[r[3]]=(inventory[r[3]]||0)+r[4];renderBar();renderInventory();sound(520,.1)};box.appendChild(b)})}const main=document.getElementById("mainSlots"),hot=document.getElementById("hotSlots");main.innerHTML="";hot.innerHTML="";for(let i=0;i<types.length;i++){const slot=document.createElement("button");slot.className="inv-slot";if(i<types.length&&inventory[i]>0){slot.innerHTML='<span class="swatch" style="background:'+types[i].top+'"></span><small>'+inventory[i]+'</small>';slot.title=types[i].name;slot.onclick=()=>{selected=i;renderBar();renderInventory();sound(330)}}main.appendChild(slot)}for(let i=0;i<9;i++){const slot=document.createElement("button");slot.className="inv-slot"+(selected===i?" selected":"");if(i<types.length){slot.innerHTML='<span class="swatch" style="background:'+types[i].top+'"></span><small>'+inventory[i]+'</small>';slot.title=types[i].name;slot.onclick=()=>{selected=i;renderBar();renderInventory();sound(330)}}hot.appendChild(slot)}}
 function renderBar(){const bar=document.getElementById('bar');bar.innerHTML='';types.slice(0,9).forEach((t,i)=>{const b=document.createElement('button');b.className='slot'+(selected===i?' active':'');b.innerHTML='<span class="swatch" style="background:'+t.top+'"></span><small>'+t.name+' · '+inventory[i]+'</small>';b.onclick=()=>{selected=i;renderBar();sound(300)};bar.appendChild(b)})}
@@ -52,13 +52,13 @@ document.getElementById('inventoryButton').onclick=()=>toggleInventory();documen
    Índices Gamepad API standard; ambos seguem o mapeamento combinado.
    2.1 e 8.1 ficam separados para permitir afinação independente após teste físico. */
 const PAD_PROFILES={
-  "2.1":{label:"N'PLAY SKILL 2.1",buttons:{A:0,B:1,X:2,Y:3,L1:4,R1:5,L2:6,R2:7,START:9,L3:10,R3:11,UP:12,RIGHT:15},axes:{moveX:2,moveY:3,cameraX:0,cameraY:1}},
-  "8.1":{label:"N'PLAY SKILL 8.1",buttons:{A:0,B:1,X:2,Y:3,L1:4,R1:5,L2:6,R2:7,START:9,L3:10,R3:11,UP:12,RIGHT:15},axes:{moveX:2,moveY:3,cameraX:0,cameraY:1}}
+  "2.1":{label:"N'PLAY SKILL 2.1",buttons:{A:0,B:1,X:2,Y:3,L1:4,R1:5,L2:6,R2:7,START:9,L3:10,R3:11,UP:12,RIGHT:15},axes:{moveX:0,moveY:1,cameraX:2,cameraY:3}},
+  "8.1":{label:"N'PLAY SKILL 8.1",buttons:{A:0,B:1,X:2,Y:3,L1:4,R1:5,L2:6,R2:7,START:9,L3:10,R3:11,UP:12,RIGHT:15},axes:{moveX:0,moveY:1,cameraX:2,cameraY:3}}
 };
 let manualPadProfile=localStorage.getItem("picraftPadProfile")||"auto";
 let activePadProfile="auto",padPrevious=[],padMoveAt=0,padCameraAt=0;
 let gameModeIndex=0,sneaking=false,sprinting=false,chatOpen=false;
-const gameModes=["Survival","Criativo","Aventura","Espectador"];
+const gameModes=["Criativo","Aventura","Espectador","Sobrevivência"];
 const padProfileButton=document.getElementById("padProfile");
 if(padProfileButton){
   const refreshProfileButton=()=>padProfileButton.textContent="Comando: "+(manualPadProfile==="auto"?"Auto":manualPadProfile);
@@ -120,14 +120,14 @@ function pollGamepads(now){
     const moveX=axes[ax.moveX]||0,moveY=axes[ax.moveY]||0;
     const cameraX=axes[ax.cameraX]||0,cameraY=axes[ax.cameraY]||0;
     const moveInterval=sprinting?75:(sneaking?245:155);
-    // Analógico DIREITO: mover o jogador.
+    // Analógico ESQUERDO: mover o jogador.
     if(!inventoryOpen&&!chatOpen&&now-padMoveAt>moveInterval){
       if(moveX<-.6){move(-1,0);padMoveAt=now}
       else if(moveX>.6){move(1,0);padMoveAt=now}
       else if(moveY<-.6){move(0,-1);padMoveAt=now}
       else if(moveY>.6){move(0,1);padMoveAt=now}
     }
-    // Analógico ESQUERDO: orientar o alvo/câmara.
+    // Analógico DIREITO: orientar o alvo/câmara.
     if(!inventoryOpen&&!chatOpen&&now-padCameraAt>110&&(Math.abs(cameraX)>.35||Math.abs(cameraY)>.35)){
       const dx=Math.abs(cameraX)>.35?(cameraX>0?1:-1):0;
       const dy=Math.abs(cameraY)>.35?(cameraY>0?1:-1):0;
@@ -142,11 +142,11 @@ function pollGamepads(now){
       edge(b.Y,()=>toggleInventory(true)); // Y: inventário
       edge(b.A,()=>jump());                // A: saltar
       edge(b.X,()=>{const c=world[aim.y][aim.x];if(c.z){selected=c.t;renderBar();document.getElementById("hint").textContent="Bloco selecionado: "+types[selected].name}});
-      edge(b.L3,()=>{sprinting=!sprinting;document.getElementById("hint").textContent=sprinting?"Correr (L3)":"Correr desligado"});
-      edge(b.R3,()=>{sneaking=!sneaking;document.getElementById("hint").textContent=sneaking?"Agachar (R3)":"Agachar desligado"});
-      edge(b.UP,()=>showChat());           // D-pad cima: chat
-      edge(b.RIGHT,()=>setGameMode());     // D-pad direita: Survival/Criativo/Aventura/Espectador
-      edge(b.START,()=>{location.href="index.html"}); // Start: voltar ao menu
+      edge(b.L3,()=>{sneaking=!sneaking;document.getElementById("hint").textContent=sneaking?"Agachar (L3)":"Agachar desligado"});
+      edge(b.R3,()=>{sprinting=!sprinting;document.getElementById("hint").textContent=sprinting?"Correr (R3)":"Correr desligado"});
+      edge(b.B,()=>{sneaking=!sneaking;document.getElementById("hint").textContent=sneaking?"Agachar (B/Círculo)":"Agachar desligado"});
+      edge(13,()=>showChat());             // D-pad baixo: chat
+      edge(b.RIGHT,()=>setGameMode());     // D-pad direita: Criativo/Aventura/Espectador/Sobrevivência
     }else if(inventoryOpen){
       edge(b.B,()=>toggleInventory(false));
       edge(b.START,()=>toggleInventory(false));
@@ -154,7 +154,6 @@ function pollGamepads(now){
       edge(b.B,()=>showChat());
     }
     padPrevious[pad.index]=buttons.map(x=>!!x.pressed);
-    document.getElementById("hint").textContent="N'PLAY SKILL "+profileName+" ligado · R2 partir · L2 colocar · Y inventário";
   }
   requestAnimationFrame(pollGamepads);
 }
