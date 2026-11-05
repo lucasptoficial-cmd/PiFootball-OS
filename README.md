@@ -137,32 +137,25 @@ O desenho está em `src/visual_theme.py`; a lógica de navegação, perfis, IPTV
 - CH+/CH−: reservado para mudar canais na área TV quando a lista de canais estiver ligada.
 - A barra inferior apresenta a legenda dos controlos.
 
-### PiCraft — comando PlayStation
-- Analógico esquerdo: mover o jogador.
-- Analógico direito: orientar o alvo/câmara.
-- L2: interagir/colocar bloco.
-- R2: partir bloco.
-- L1/R1: bloco anterior/seguinte na barra rápida.
-- L3: alternar agachar; R3: alternar correr.
-- Cruz: saltar; Quadrado: selecionar o bloco apontado; Triângulo: inventário.
-- D-pad para baixo: abrir/fechar o chat local; D-pad direita: alternar Survival, Criativo, Aventura e Espectador.
-- Options/Start: regressar ao menu PiCraft; Círculo: fechar o inventário.
+### PiCraft — controlos N'PLAY SKILL 2.1 e 8.1
 
-O chat desta versão é local ao dispositivo; não representa ainda mensagens em rede. Os controlos de gamepad são exclusivos do PiCraft.
+Os dois comandos usam o mesmo esquema lógico:
+- **Analógico esquerdo:** mover o jogador.
+- **Analógico direito:** orientar o alvo/câmara no mundo isométrico.
+- **R2:** partir/quebrar blocos.
+- **L2:** interagir/colocar blocos.
+- **R1 / L1:** item seguinte / anterior na barra rápida.
+- **R3:** correr.
+- **L3:** Shift / agachar.
+- **Y / Triângulo:** inventário.
+- **X / Quadrado:** selecionar o bloco apontado.
+- **A / Cruz:** saltar.
+- **B / Círculo:** Shift / agachar.
+- **D-pad para baixo:** abrir/fechar o chat local.
+- **D-pad para a direita:** percorrer Criativo → Aventura → Espectador → Sobrevivência → repetir.
+- **D-pad para cima e esquerda:** sem função.
+- **START / Options:** comportamento equivalente a ESC (abrir/fechar o inventário).
 
-## Comandos N'PLAY SKILL 2.1 e 8.1 (PiCraft)
+O botão **Comando: Auto** permite alternar entre deteção automática, perfil 2.1 e perfil 8.1. A deteção automática usa o nome USB comunicado pelo recetor; se este apresentar um nome genérico, escolhe manualmente o perfil. Os dois perfis estão configurados com o mapeamento padrão da Gamepad API.
 
-O PiCraft tem dois perfis selecionáveis no botão **Comando: Auto** no cabeçalho:
-- Auto: tenta identificar o modelo pelo nome USB informado pelo recetor; quando o recetor não indica a versão, usa o perfil de compatibilidade.
-- N'PLAY SKILL 2.1: força o perfil 2.1.
-- N'PLAY SKILL 8.1: força o perfil 8.1.
-
-Mapeamento lógico acordado para ambos:
-- R2 partir blocos; L2 colocar/interagir.
-- R1/L1 avançar/recuar item da barra rápida.
-- Y inventário; A saltar; X selecionar bloco apontado.
-- R3 agachar; L3 correr; Start voltar ao menu.
-- D-pad para cima abrir chat; D-pad para a direita alternar Survival, Criativo, Aventura e Espectador.
-- Analógico direito mover o jogador; analógico esquerdo orientar o alvo/câmara.
-
-Os perfis são separados para permitir ajustes independentes. Os recetores USB podem apresentar nomes genéricos e índices de botões diferentes; a confirmação final de cada botão exige testar fisicamente os dois comandos no Raspberry Pi/recetor. O seletor manual permite escolher o perfil quando a identificação automática não consegue distinguir a versão.
+**Limitações e testes:** alguns recetores podem reportar índices diferentes dos botões. É necessário testar fisicamente os dois comandos para confirmar cada botão. O analógico direito orienta o alvo no protótipo isométrico; ainda não existe uma câmara 3D livre. O chat é local ao navegador, não é multiplayer em rede. O esquema está implementado no protótipo, mas a compatibilidade final dos dois comandos ainda não foi testada no Raspberry Pi 2.
