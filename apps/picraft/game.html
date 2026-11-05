@@ -2,7 +2,7 @@
 <html lang="pt-PT"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PiCraft — Mundo</title>
 <style>
 :root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;background:#101820;color:#f4f6f8;font:15px system-ui;overflow:hidden}header{height:54px;background:#172532;border-bottom:2px solid #e98a36;display:flex;align-items:center;justify-content:space-between;padding:0 14px}header b{font-size:20px}button{background:#263b4c;color:white;border:1px solid #506273;border-radius:7px;padding:8px 12px}button:focus{outline:2px solid #ffc15c}#game{display:block;width:100vw;height:calc(100dvh - 124px);touch-action:none}#bar{height:70px;background:#172532;display:flex;align-items:center;justify-content:center;gap:6px;padding:5px;flex-wrap:wrap}.slot{width:48px;height:50px;padding:3px;border:2px solid #71808b;background:#27333d}.slot.active{border:3px solid #ffc15c;background:#46515a}.swatch{display:block;width:23px;height:23px;margin:auto;border:1px solid #ffffff55}.slot small{display:block;font-size:10px;text-align:center}#hint{position:fixed;top:64px;left:10px;background:#101820bb;padding:7px 10px;border-radius:8px;max-width:75vw}#touch{position:fixed;right:10px;bottom:82px;display:grid;grid-template-columns:repeat(3,45px);gap:4px}#touch button{height:42px;background:#182a39dd;font-size:18px}#touch .empty{visibility:hidden}@media(min-width:850px){#touch{opacity:.55}} 
-#inventoryPanel{position:fixed;inset:54px 0 70px;display:none;align-items:center;justify-content:center;background:#0009;z-index:5;padding:12px}#inventoryPanel.open{display:flex}.inv-window{width:min(570px,96vw);background:#c6c6c6;color:#222;border:4px solid #555;box-shadow:inset 3px 3px #fff,inset -3px -3px #777;padding:14px;font-family:monospace}.inv-title{font-weight:bold;font-size:18px;margin-bottom:10px}.inv-layout{display:grid;grid-template-columns:1fr 112px;gap:16px}.inv-grid{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:3px;max-height:270px;overflow-y:auto;padding:2px}.inv-slot{aspect-ratio:1;background:#8b8b8b;border:2px solid;border-color:#555 #fff #fff #555;position:relative;display:grid;place-items:center;padding:0}.inv-slot.selected{outline:3px solid #ffb52e;z-index:1}.inv-slot .swatch{width:70%;height:70%;border:2px solid #333}.inv-slot small{position:absolute;right:2px;bottom:0;color:white;text-shadow:1px 1px #222;font:bold 12px monospace}.inv-side{font-size:12px}.inv-side .craft{display:grid;grid-template-columns:repeat(2,35px);gap:3px;margin:8px 0}.inv-side .craft .inv-slot{width:35px}.inv-sep{height:12px}.inv-label{font-size:13px;margin:9px 0 5px}.inv-foot{display:flex;justify-content:space-between;align-items:center;margin-top:12px;font-size:12px}@media(max-width:430px){.inv-window{padding:8px}.inv-layout{grid-template-columns:1fr 78px;gap:7px}.inv-side .craft{grid-template-columns:repeat(2,28px)}.inv-side .craft .inv-slot{width:28px}.inv-grid{gap:2px}.inv-title{font-size:15px}}</style></head><body><header><b>⛏ PiCraft · Mundo 0.2</b><div><button id="inventoryButton">Inventário (E)</button> <button id="save">Guardar</button> <button id="back">Menu</button></div></header><canvas id="game"></canvas><div id="inventoryPanel"><div class="inv-window"><div class="inv-title">Inventário</div><div class="inv-layout"><div><div class="inv-label">Inventário</div><div id="mainSlots" class="inv-grid"></div><div class="inv-sep"></div><div class="inv-label">Barra rápida</div><div id="hotSlots" class="inv-grid"></div></div><div class="inv-side"><div class="inv-label">Criação 2 × 2</div><div class="craft"><button class="inv-slot"></button><button class="inv-slot"></button><button class="inv-slot"></button><button class="inv-slot"></button></div><div>Resultado</div><div class="inv-slot" style="width:38px;height:38px;margin-top:5px"></div><p>Seleciona um bloco para a barra rápida.</p><div id='craftRecipes' style='display:grid;gap:4px;margin-top:8px'></div><p>10 tipos de criaturas no mundo.</p></div></div><div class="inv-foot"><span>E / ESC para fechar</span><button id="closeInv">Fechar</button></div></div></div><div id="hint">L2: interagir · R2: partir · L1/R1: item · L3: agachar · R3: correr · △: inventário · D-pad ↓: chat</div><div id="bar"></div><div id="touch"><span class="empty"></span><button data-key="ArrowUp">▲</button><span class="empty"></span><button data-key="ArrowLeft">◀</button><button data-key="Space">●</button><button data-key="ArrowRight">▶</button><span class="empty"></span><button data-key="ArrowDown">▼</button><button data-key="Enter">＋</button></div>
+#inventoryPanel{position:fixed;inset:54px 0 70px;display:none;align-items:center;justify-content:center;background:#0009;z-index:5;padding:12px}#inventoryPanel.open{display:flex}.inv-window{width:min(570px,96vw);background:#c6c6c6;color:#222;border:4px solid #555;box-shadow:inset 3px 3px #fff,inset -3px -3px #777;padding:14px;font-family:monospace}.inv-title{font-weight:bold;font-size:18px;margin-bottom:10px}.inv-layout{display:grid;grid-template-columns:1fr 112px;gap:16px}.inv-grid{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:3px;max-height:270px;overflow-y:auto;padding:2px}.inv-slot{aspect-ratio:1;background:#8b8b8b;border:2px solid;border-color:#555 #fff #fff #555;position:relative;display:grid;place-items:center;padding:0}.inv-slot.selected{outline:3px solid #ffb52e;z-index:1}.inv-slot .swatch{width:70%;height:70%;border:2px solid #333}.inv-slot small{position:absolute;right:2px;bottom:0;color:white;text-shadow:1px 1px #222;font:bold 12px monospace}.inv-side{font-size:12px}.inv-side .craft{display:grid;grid-template-columns:repeat(2,35px);gap:3px;margin:8px 0}.inv-side .craft .inv-slot{width:35px}.inv-sep{height:12px}.inv-label{font-size:13px;margin:9px 0 5px}.inv-foot{display:flex;justify-content:space-between;align-items:center;margin-top:12px;font-size:12px}@media(max-width:430px){.inv-window{padding:8px}.inv-layout{grid-template-columns:1fr 78px;gap:7px}.inv-side .craft{grid-template-columns:repeat(2,28px)}.inv-side .craft .inv-slot{width:28px}.inv-grid{gap:2px}.inv-title{font-size:15px}}</style></head><body><header><b>⛏ PiCraft · Mundo 0.2</b><div><button id="inventoryButton">Inventário (E)</button> <button id="padProfile">Comando: Auto</button> <button id="save">Guardar</button> <button id="back">Menu</button></div></header><canvas id="game"></canvas><div id="inventoryPanel"><div class="inv-window"><div class="inv-title">Inventário</div><div class="inv-layout"><div><div class="inv-label">Inventário</div><div id="mainSlots" class="inv-grid"></div><div class="inv-sep"></div><div class="inv-label">Barra rápida</div><div id="hotSlots" class="inv-grid"></div></div><div class="inv-side"><div class="inv-label">Criação 2 × 2</div><div class="craft"><button class="inv-slot"></button><button class="inv-slot"></button><button class="inv-slot"></button><button class="inv-slot"></button></div><div>Resultado</div><div class="inv-slot" style="width:38px;height:38px;margin-top:5px"></div><p>Seleciona um bloco para a barra rápida.</p><div id='craftRecipes' style='display:grid;gap:4px;margin-top:8px'></div><p>10 tipos de criaturas no mundo.</p></div></div><div class="inv-foot"><span>E / ESC para fechar</span><button id="closeInv">Fechar</button></div></div></div><div id="hint">L2: interagir · R2: partir · L1/R1: item · L3: agachar · R3: correr · △: inventário · D-pad ↓: chat</div><div id="bar"></div><div id="touch"><span class="empty"></span><button data-key="ArrowUp">▲</button><span class="empty"></span><button data-key="ArrowLeft">◀</button><button data-key="Space">●</button><button data-key="ArrowRight">▶</button><span class="empty"></span><button data-key="ArrowDown">▼</button><button data-key="Enter">＋</button></div>
 <script>
 (()=>{
 const canvas=document.getElementById('game'),ctx=canvas.getContext('2d');
@@ -48,15 +48,37 @@ function toggleInventory(force){inventoryOpen=typeof force==="boolean"?force:!in
 function renderInventory(){const box=document.getElementById('craftRecipes');if(box){box.innerHTML='<b>Receitas</b>';recipes.forEach(r=>{const b=document.createElement('button');b.textContent=r[0]+' ('+r[2]+' materiais)';b.onclick=()=>{if((inventory[r[1]]||0)<r[2]){document.getElementById('hint').textContent='Faltam materiais.';return}inventory[r[1]]-=r[2];inventory[r[3]]=(inventory[r[3]]||0)+r[4];renderBar();renderInventory();sound(520,.1)};box.appendChild(b)})}const main=document.getElementById("mainSlots"),hot=document.getElementById("hotSlots");main.innerHTML="";hot.innerHTML="";for(let i=0;i<types.length;i++){const slot=document.createElement("button");slot.className="inv-slot";if(i<types.length&&inventory[i]>0){slot.innerHTML='<span class="swatch" style="background:'+types[i].top+'"></span><small>'+inventory[i]+'</small>';slot.title=types[i].name;slot.onclick=()=>{selected=i;renderBar();renderInventory();sound(330)}}main.appendChild(slot)}for(let i=0;i<9;i++){const slot=document.createElement("button");slot.className="inv-slot"+(selected===i?" selected":"");if(i<types.length){slot.innerHTML='<span class="swatch" style="background:'+types[i].top+'"></span><small>'+inventory[i]+'</small>';slot.title=types[i].name;slot.onclick=()=>{selected=i;renderBar();renderInventory();sound(330)}}hot.appendChild(slot)}}
 function renderBar(){const bar=document.getElementById('bar');bar.innerHTML='';types.slice(0,9).forEach((t,i)=>{const b=document.createElement('button');b.className='slot'+(selected===i?' active':'');b.innerHTML='<span class="swatch" style="background:'+t.top+'"></span><small>'+t.name+' · '+inventory[i]+'</small>';b.onclick=()=>{selected=i;renderBar();sound(300)};bar.appendChild(b)})}
 document.getElementById('inventoryButton').onclick=()=>toggleInventory();document.getElementById('closeInv').onclick=()=>toggleInventory(false);
-/* Mapeamento confirmado para comando PlayStation dentro do PiCraft.
-   L2 interagir/colocar · R2 partir · L1/R1 hotbar · L3 agachar · R3 correr
-   Analógico esquerdo mover · analógico direito orientar alvo/câmara
-   Triângulo inventário · Cruz saltar · D-pad baixo chat · Options sair/pausa
-   D-pad direito alterna Survival > Criativo > Aventura > Espectador. */
-let padPrevious=[],padDirectionAt=0,aimDirectionAt=0;
-let gameModeIndex=0,sneaking=false,sprinting=false;
+/* Perfis N'PLAY SKILL 2.1 e 8.1.
+   Índices Gamepad API standard; ambos seguem o mapeamento combinado.
+   2.1 e 8.1 ficam separados para permitir afinação independente após teste físico. */
+const PAD_PROFILES={
+  "2.1":{label:"N'PLAY SKILL 2.1",buttons:{A:0,B:1,X:2,Y:3,L1:4,R1:5,L2:6,R2:7,START:9,L3:10,R3:11,UP:12,RIGHT:15},axes:{moveX:2,moveY:3,cameraX:0,cameraY:1}},
+  "8.1":{label:"N'PLAY SKILL 8.1",buttons:{A:0,B:1,X:2,Y:3,L1:4,R1:5,L2:6,R2:7,START:9,L3:10,R3:11,UP:12,RIGHT:15},axes:{moveX:2,moveY:3,cameraX:0,cameraY:1}}
+};
+let manualPadProfile=localStorage.getItem("picraftPadProfile")||"auto";
+let activePadProfile="auto",padPrevious=[],padMoveAt=0,padCameraAt=0;
+let gameModeIndex=0,sneaking=false,sprinting=false,chatOpen=false;
 const gameModes=["Survival","Criativo","Aventura","Espectador"];
-let chatOpen=false;
+const padProfileButton=document.getElementById("padProfile");
+if(padProfileButton){
+  const refreshProfileButton=()=>padProfileButton.textContent="Comando: "+(manualPadProfile==="auto"?"Auto":manualPadProfile);
+  refreshProfileButton();
+  padProfileButton.addEventListener("click",()=>{
+    manualPadProfile=manualPadProfile==="auto"?"2.1":manualPadProfile==="2.1"?"8.1":"auto";
+    localStorage.setItem("picraftPadProfile",manualPadProfile);
+    refreshProfileButton();
+    document.getElementById("hint").textContent="Perfil do comando: "+(manualPadProfile==="auto"?"deteção automática":"N'PLAY SKILL "+manualPadProfile);
+  });
+}
+function identifyPadProfile(pad){
+  if(manualPadProfile!=="auto")return manualPadProfile;
+  const id=(pad.id||"").toLowerCase();
+  if(id.includes("2.1")||id.includes("skill 2.1"))return "2.1";
+  if(id.includes("8.1")||id.includes("skill 8.1"))return "8.1";
+  // Muitos recetores USB não comunicam o número do modelo.
+  // Nesses casos usa o perfil compatível e permite escolher manualmente no botão.
+  return "8.1";
+}
 function showChat(){
   let panel=document.getElementById("picraftChat");
   if(!panel){
@@ -88,63 +110,63 @@ function pollGamepads(now){
   const pads=navigator.getGamepads?navigator.getGamepads():[];
   for(const pad of pads){
     if(!pad)continue;
-    const buttons=pad.buttons||[];
+    const profileName=identifyPadProfile(pad);
+    const profile=PAD_PROFILES[profileName];
+    activePadProfile=profileName;
+    const b=profile.buttons,ax=profile.axes,buttons=pad.buttons||[],axes=pad.axes||[];
     const pressed=i=>!!buttons[i]?.pressed;
     const was=i=>!!padPrevious[pad.index]?.[i];
     const edge=(i,fn)=>{if(pressed(i)&&!was(i))fn()};
-    const axes=pad.axes||[],lx=axes[0]||0,ly=axes[1]||0,rx=axes[2]||0,ry=axes[3]||0;
+    const moveX=axes[ax.moveX]||0,moveY=axes[ax.moveY]||0;
+    const cameraX=axes[ax.cameraX]||0,cameraY=axes[ax.cameraY]||0;
     const moveInterval=sprinting?75:(sneaking?245:155);
-    if(!inventoryOpen&&!chatOpen&&now-padDirectionAt>moveInterval){
-      if(lx<-.6){move(-1,0);padDirectionAt=now}
-      else if(lx>.6){move(1,0);padDirectionAt=now}
-      else if(ly<-.6){move(0,-1);padDirectionAt=now}
-      else if(ly>.6){move(0,1);padDirectionAt=now}
+    // Analógico DIREITO: mover o jogador.
+    if(!inventoryOpen&&!chatOpen&&now-padMoveAt>moveInterval){
+      if(moveX<-.6){move(-1,0);padMoveAt=now}
+      else if(moveX>.6){move(1,0);padMoveAt=now}
+      else if(moveY<-.6){move(0,-1);padMoveAt=now}
+      else if(moveY>.6){move(0,1);padMoveAt=now}
     }
-    if(!inventoryOpen&&!chatOpen&&now-aimDirectionAt>110&&(Math.abs(rx)>.35||Math.abs(ry)>.35)){
-      const dx=Math.abs(rx)>.35?(rx>0?1:-1):0;
-      const dy=Math.abs(ry)>.35?(ry>0?1:-1):0;
+    // Analógico ESQUERDO: orientar o alvo/câmara.
+    if(!inventoryOpen&&!chatOpen&&now-padCameraAt>110&&(Math.abs(cameraX)>.35||Math.abs(cameraY)>.35)){
+      const dx=Math.abs(cameraX)>.35?(cameraX>0?1:-1):0;
+      const dy=Math.abs(cameraY)>.35?(cameraY>0?1:-1):0;
       aim={x:Math.max(0,Math.min(W-1,aim.x+dx)),y:Math.max(0,Math.min(H-1,aim.y+dy))};
-      aimDirectionAt=now;draw();
+      padCameraAt=now;draw();
     }
     if(!inventoryOpen&&!chatOpen){
-      edge(6,()=>action(true));       // L2: interagir/colocar bloco
-      edge(7,()=>action(false));      // R2: partir bloco
-      edge(4,()=>{selected=(selected+types.length-1)%types.length;renderBar()}); // L1
-      edge(5,()=>{selected=(selected+1)%types.length;renderBar()}); // R1
-      edge(3,()=>toggleInventory(true)); // Triângulo: inventário
-      edge(0,()=>jump());             // Cruz: saltar
-      edge(2,()=>{const c=world[aim.y][aim.x];if(c.z){selected=c.t;renderBar();document.getElementById("hint").textContent="Bloco selecionado: "+types[selected].name}}); // Quadrado: selecionar bloco
-      edge(10,()=>{sneaking=!sneaking;document.getElementById("hint").textContent=sneaking?"Agachar (L3)":"Agachar desligado"}); // L3
-      edge(11,()=>{sprinting=!sprinting;document.getElementById("hint").textContent=sprinting?"Correr (R3)":"Correr desligado"}); // R3
-      edge(13,()=>showChat());        // D-pad baixo: chat
-      edge(15,()=>setGameMode());     // D-pad direita: modo de jogo
-      edge(9,()=>{location.href="index.html"}); // Options / Start
+      edge(b.L2,()=>action(true));       // L2: colocar/interagir
+      edge(b.R2,()=>action(false));      // R2: partir
+      edge(b.L1,()=>{selected=(selected+types.length-1)%types.length;renderBar()});
+      edge(b.R1,()=>{selected=(selected+1)%types.length;renderBar()});
+      edge(b.Y,()=>toggleInventory(true)); // Y: inventário
+      edge(b.A,()=>jump());                // A: saltar
+      edge(b.X,()=>{const c=world[aim.y][aim.x];if(c.z){selected=c.t;renderBar();document.getElementById("hint").textContent="Bloco selecionado: "+types[selected].name}});
+      edge(b.L3,()=>{sprinting=!sprinting;document.getElementById("hint").textContent=sprinting?"Correr (L3)":"Correr desligado"});
+      edge(b.R3,()=>{sneaking=!sneaking;document.getElementById("hint").textContent=sneaking?"Agachar (R3)":"Agachar desligado"});
+      edge(b.UP,()=>showChat());           // D-pad cima: chat
+      edge(b.RIGHT,()=>setGameMode());     // D-pad direita: Survival/Criativo/Aventura/Espectador
+      edge(b.START,()=>{location.href="index.html"}); // Start: voltar ao menu
     }else if(inventoryOpen){
-      edge(1,()=>toggleInventory(false)); // Círculo: fechar inventário
-      edge(9,()=>toggleInventory(false));
+      edge(b.B,()=>toggleInventory(false));
+      edge(b.START,()=>toggleInventory(false));
     }else if(chatOpen){
-      edge(1,()=>showChat());
+      edge(b.B,()=>showChat());
     }
-    padPrevious[pad.index]=buttons.map(b=>!!b.pressed);
+    padPrevious[pad.index]=buttons.map(x=>!!x.pressed);
+    document.getElementById("hint").textContent="N'PLAY SKILL "+profileName+" ligado · R2 partir · L2 colocar · Y inventário";
   }
   requestAnimationFrame(pollGamepads);
 }
 addEventListener("gamepadconnected",e=>{
-  document.getElementById("hint").textContent="Comando PlayStation ligado · L2 interagir · R2 partir · L1/R1 itens · △ inventário";
+  const name=identifyPadProfile(e.gamepad);
+  document.getElementById("hint").textContent="N'PLAY SKILL "+name+" ligado · R2 partir · L2 colocar · Y inventário";
 });
 addEventListener("gamepaddisconnected",()=>{
   document.getElementById("hint").textContent="Comando desligado · Teclado/WASD ou controlos tácteis";
 });
 requestAnimationFrame(pollGamepads);
-}
-addEventListener('gamepadconnected',e=>{
-  document.getElementById('hint').textContent='Comando ligado: '+e.gamepad.id+' · analógico esquerdo: mover · R2: partir · R1/L1: itens · Triângulo: inventário';
-});
-addEventListener('gamepaddisconnected',()=>{
-  document.getElementById('hint').textContent='Comando desligado · Teclado/WASD ou controlos tácteis';
-});
-requestAnimationFrame(pollGamepads);
-\naddEventListener('keydown',e=>{if(e.key.toLowerCase()==='e'||e.key==='Escape'){e.preventDefault();toggleInventory();return}if(inventoryOpen)return;if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' ','Enter'].includes(e.key))e.preventDefault();if(e.key==='ArrowUp'||e.key.toLowerCase()==='w')move(0,-1);if(e.key==='ArrowDown'||e.key.toLowerCase()==='s')move(0,1);if(e.key==='ArrowLeft'||e.key.toLowerCase()==='a')move(-1,0);if(e.key==='ArrowRight'||e.key.toLowerCase()==='d')move(1,0);if(e.key===' '||e.code==='Space')action(false);if(e.key==='Enter')action(true);if(/^[1-6]$/.test(e.key)){selected=+e.key-1;renderBar()}});
+addEventListener('keydown',e=>{if(e.key.toLowerCase()==='e'||e.key==='Escape'){e.preventDefault();toggleInventory();return}if(inventoryOpen)return;if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' ','Enter'].includes(e.key))e.preventDefault();if(e.key==='ArrowUp'||e.key.toLowerCase()==='w')move(0,-1);if(e.key==='ArrowDown'||e.key.toLowerCase()==='s')move(0,1);if(e.key==='ArrowLeft'||e.key.toLowerCase()==='a')move(-1,0);if(e.key==='ArrowRight'||e.key.toLowerCase()==='d')move(1,0);if(e.key===' '||e.code==='Space')action(false);if(e.key==='Enter')action(true);if(/^[1-6]$/.test(e.key)){selected=+e.key-1;renderBar()}});
 document.querySelectorAll('[data-key]').forEach(b=>b.onclick=()=>{const k=b.dataset.key;if(k==='Space')action(false);else if(k==='Enter')action(true);else if(k==='ArrowUp')move(0,-1);else if(k==='ArrowDown')move(0,1);else if(k==='ArrowLeft')move(-1,0);else move(1,0)});
 canvas.addEventListener('pointerdown',e=>{const rect=canvas.getBoundingClientRect(),mx=e.clientX-rect.left,my=e.clientY-rect.top;let best=null,dist=1e9;for(let y=0;y<H;y++)for(let x=0;x<W;x++){const p=iso(x,y,world[y][x].z),d=Math.hypot(mx-p.x,my-(p.y+tileH/2));if(d<dist){dist=d;best={x,y}}}if(best){aim=best;action(e.button===2)} });canvas.addEventListener('contextmenu',e=>e.preventDefault());
 document.getElementById('save').onclick=()=>{localStorage.setItem('picraft_world_01',JSON.stringify({world,player,inventory,selected,tick,mobList}));sound(600,.1);document.getElementById('hint').textContent='Mundo guardado neste navegador.'};
