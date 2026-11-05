@@ -75,9 +75,15 @@ function identifyPadProfile(pad){
   const id=(pad.id||"").toLowerCase();
   if(id.includes("2.1")||id.includes("skill 2.1"))return "2.1";
   if(id.includes("8.1")||id.includes("skill 8.1"))return "8.1";
-  // Muitos recetores USB não comunicam o número do modelo.
-  // Nesses casos usa o perfil compatível e permite escolher manualmente no botão.
+  // Recetores genéricos não permitem identificar o modelo com segurança.
   return "8.1";
+}
+function padStatus(pad,profileName){
+  const id=(pad.id||"ID USB não fornecido").trim();
+  if(manualPadProfile!=="auto")return "Perfil manual N’PLAY SKILL "+profileName+" · "+id;
+  const normalized=id.toLowerCase();
+  if(normalized.includes("2.1")||normalized.includes("skill 2.1")||normalized.includes("8.1")||normalized.includes("skill 8.1"))return "N’PLAY SKILL "+profileName+" identificado · "+id;
+  return "Comando USB: "+id+" · versão não identificada; perfil 8.1 por defeito. Podes escolher 2.1 no botão Comando.";
 }
 function showChat(){
   let panel=document.getElementById("picraftChat");
@@ -112,7 +118,7 @@ function pollGamepads(now){
     if(!pad)continue;
     const profileName=identifyPadProfile(pad);
     const profile=PAD_PROFILES[profileName];
-    if(activePadProfile!==profileName){activePadProfile=profileName;document.getElementById("hint").textContent=profile.label+" · perfil ativo";}
+    if(activePadProfile!==profileName){activePadProfile=profileName;document.getElementById("hint").textContent=padStatus(pad,profileName);}
     const b=profile.buttons,ax=profile.axes,buttons=pad.buttons||[],axes=pad.axes||[];
     const pressed=i=>!!buttons[i]?.pressed;
     const was=i=>!!padPrevious[pad.index]?.[i];
@@ -160,7 +166,7 @@ function pollGamepads(now){
 }
 addEventListener("gamepadconnected",e=>{
   const name=identifyPadProfile(e.gamepad);
-  document.getElementById("hint").textContent="N'PLAY SKILL "+name+" ligado · R2 partir · L2 colocar · Y inventário";
+  document.getElementById("hint").textContent=padStatus(e.gamepad,name)+" · R2 partir · L2 interagir · Y inventário";
 });
 addEventListener("gamepaddisconnected",()=>{
   document.getElementById("hint").textContent="Comando desligado · Teclado/WASD ou controlos tácteis";
