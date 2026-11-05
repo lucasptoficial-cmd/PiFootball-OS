@@ -52,7 +52,7 @@ document.getElementById('inventoryButton').onclick=()=>toggleInventory();documen
    Índices Gamepad API standard; ambos seguem o mapeamento combinado.
    2.1 e 8.1 ficam separados para permitir afinação independente após teste físico. */
 const PAD_PROFILES={
-  "2.1":{label:"N'PLAY SKILL 2.1",buttons:{A:0,B:1,X:2,Y:3,L1:4,R1:5,L2:6,R2:7,START:9,L3:10,R3:11,UP:12,RIGHT:15},axes:{moveX:0,moveY:1,cameraX:2,cameraY:3}},
+  "2.1":{label:"N'PLAY SKILL 2.1",buttons:{A:0,B:1,X:2,Y:3,L1:4,R1:5,L2:6,R2:7,START:9,L3:10,R3:11,UP:12,DOWN:13,RIGHT:15},axes:{moveX:0,moveY:1,cameraX:2,cameraY:3}},
   "8.1":{label:"N'PLAY SKILL 8.1",buttons:{A:0,B:1,X:2,Y:3,L1:4,R1:5,L2:6,R2:7,START:9,L3:10,R3:11,UP:12,RIGHT:15},axes:{moveX:0,moveY:1,cameraX:2,cameraY:3}}
 };
 let manualPadProfile=localStorage.getItem("picraftPadProfile")||"auto";
@@ -112,7 +112,7 @@ function pollGamepads(now){
     if(!pad)continue;
     const profileName=identifyPadProfile(pad);
     const profile=PAD_PROFILES[profileName];
-    activePadProfile=profileName;
+    if(activePadProfile!==profileName){activePadProfile=profileName;document.getElementById("hint").textContent=profile.label+" · perfil ativo";}
     const b=profile.buttons,ax=profile.axes,buttons=pad.buttons||[],axes=pad.axes||[];
     const pressed=i=>!!buttons[i]?.pressed;
     const was=i=>!!padPrevious[pad.index]?.[i];
@@ -145,9 +145,9 @@ function pollGamepads(now){
       edge(b.L3,()=>{sneaking=!sneaking;document.getElementById("hint").textContent=sneaking?"Agachar (L3)":"Agachar desligado"});
       edge(b.R3,()=>{sprinting=!sprinting;document.getElementById("hint").textContent=sprinting?"Correr (R3)":"Correr desligado"});
       edge(b.B,()=>{sneaking=!sneaking;document.getElementById("hint").textContent=sneaking?"Agachar (B/Círculo)":"Agachar desligado"});
-      edge(13,()=>showChat());             // D-pad baixo: chat
+      edge(b.DOWN,()=>showChat());         // D-pad baixo: chat
       edge(b.RIGHT,()=>setGameMode());     // D-pad direita: mudar modo
-      edge(b.START,()=>toggleInventory()); // START: comportamento equivalente a ESC     // D-pad direita: Criativo/Aventura/Espectador/Sobrevivência
+      edge(b.START,()=>toggleInventory()); // START: comportamento equivalente a ESC
     }else if(inventoryOpen){
       edge(b.B,()=>toggleInventory(false));
       edge(b.START,()=>toggleInventory(false));
