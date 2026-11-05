@@ -149,3 +149,20 @@ O desenho está em `src/visual_theme.py`; a lógica de navegação, perfis, IPTV
 - Options/Start: regressar ao menu PiCraft; Círculo: fechar o inventário.
 
 O chat desta versão é local ao dispositivo; não representa ainda mensagens em rede. Os controlos de gamepad são exclusivos do PiCraft.
+
+## Comandos N'PLAY SKILL 2.1 e 8.1 (PiCraft)
+
+O PiCraft tem dois perfis selecionáveis no botão **Comando: Auto** no cabeçalho:
+- Auto: tenta identificar o modelo pelo nome USB informado pelo recetor; quando o recetor não indica a versão, usa o perfil de compatibilidade.
+- N'PLAY SKILL 2.1: força o perfil 2.1.
+- N'PLAY SKILL 8.1: força o perfil 8.1.
+
+Mapeamento lógico acordado para ambos:
+- R2 partir blocos; L2 colocar/interagir.
+- R1/L1 avançar/recuar item da barra rápida.
+- Y inventário; A saltar; X selecionar bloco apontado.
+- R3 agachar; L3 correr; Start voltar ao menu.
+- D-pad para cima abrir chat; D-pad para a direita alternar Survival, Criativo, Aventura e Espectador.
+- Analógico direito mover o jogador; analógico esquerdo orientar o alvo/câmara.
+
+Os perfis são separados para permitir ajustes independentes. Os recetores USB podem apresentar nomes genéricos e índices de botões diferentes; a confirmação final de cada botão exige testar fisicamente os dois comandos no Raspberry Pi/recetor. O seletor manual permite escolher o perfil quando a identificação automática não consegue distinguir a versão.
