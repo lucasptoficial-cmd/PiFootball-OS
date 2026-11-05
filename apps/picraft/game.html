@@ -146,7 +146,8 @@ function pollGamepads(now){
       edge(b.R3,()=>{sprinting=!sprinting;document.getElementById("hint").textContent=sprinting?"Correr (R3)":"Correr desligado"});
       edge(b.B,()=>{sneaking=!sneaking;document.getElementById("hint").textContent=sneaking?"Agachar (B/Círculo)":"Agachar desligado"});
       edge(13,()=>showChat());             // D-pad baixo: chat
-      edge(b.RIGHT,()=>setGameMode());     // D-pad direita: Criativo/Aventura/Espectador/Sobrevivência
+      edge(b.RIGHT,()=>setGameMode());     // D-pad direita: mudar modo
+      edge(b.START,()=>toggleInventory()); // START: comportamento equivalente a ESC     // D-pad direita: Criativo/Aventura/Espectador/Sobrevivência
     }else if(inventoryOpen){
       edge(b.B,()=>toggleInventory(false));
       edge(b.START,()=>toggleInventory(false));
